@@ -3,7 +3,7 @@ import type { TodoAction, TodoItem, TodoItemStateKey, TodoState } from '../../ty
 const NEXT_STATE: Record<TodoItemStateKey, TodoItemStateKey> = {
     new: 'inProgress',
     inProgress: 'done',
-    done: 'new',
+    done: 'inProgress',
 };
 
 const nextTodoId = (todos: TodoItem[]): number => {
