@@ -1,0 +1,62 @@
+.editTodoOverlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.editTodoDialog {
+    width: min(420px, calc(100% - 2rem));
+    padding: 1.25rem;
+    border: 1px solid currentColor;
+    background: var(--bg, #fff);
+    color: var(--text-h, inherit);
+}
+
+.editTodoDialog h3 {
+    margin: 0 0 1rem;
+}
+
+.editTodoDialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.editTodoDialog label {
+    font-size: 0.9rem;
+}
+
+.editTodoDialog input,
+.editTodoDialog textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid currentColor;
+    padding: 0.4rem 0.5rem;
+    resize: vertical;
+}
+
+.editTodoActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.editTodoActions button {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+}
+
+.editTodoActions button:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}

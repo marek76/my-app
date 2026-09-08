@@ -3,9 +3,9 @@ import { filterTodos } from './filterTodos';
 import type { TodoItem } from '../../types/types';
 
 const todos: TodoItem[] = [
-    { id: 1, name: 'Open task', state: 'new' },
-    { id: 2, name: 'In progress task', state: 'inProgress' },
-    { id: 3, name: 'Done task', state: 'done' },
+    { id: 1, name: 'Open task', description: '', state: 'new' },
+    { id: 2, name: 'In progress task', description: '', state: 'inProgress' },
+    { id: 3, name: 'Done task', description: '', state: 'done' },
 ];
 
 describe('filterTodos', () => {
@@ -15,19 +15,19 @@ describe('filterTodos', () => {
 
     it('returns only new todos for filter "open"', () => {
         expect(filterTodos(todos, 'open')).toEqual([
-            { id: 1, name: 'Open task', state: 'new' },
+            { id: 1, name: 'Open task', description: '', state: 'new' },
         ]);
     });
 
     it('returns only in-progress todos for filter "inProgress"', () => {
         expect(filterTodos(todos, 'inProgress')).toEqual([
-            { id: 2, name: 'In progress task', state: 'inProgress' },
+            { id: 2, name: 'In progress task', description: '', state: 'inProgress' },
         ]);
     });
 
     it('returns only done todos for filter "done"', () => {
         expect(filterTodos(todos, 'done')).toEqual([
-            { id: 3, name: 'Done task', state: 'done' },
+            { id: 3, name: 'Done task', description: '', state: 'done' },
         ]);
     });
 });

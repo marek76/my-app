@@ -21,6 +21,7 @@ const normalizeTodos = (value: unknown): TodoItem[] => {
         const candidate = item as {
             id?: unknown;
             name?: unknown;
+            description?: unknown;
             state?: unknown;
         };
 
@@ -36,6 +37,7 @@ const normalizeTodos = (value: unknown): TodoItem[] => {
         return [{
             id: typeof candidate.id === 'number' ? candidate.id : index + 1,
             name: candidate.name,
+            description: typeof candidate.description === 'string' ? candidate.description : '',
             state,
         }];
     });
