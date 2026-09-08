@@ -46,7 +46,7 @@ describe('todoReducer', () => {
     });
 
     describe('TOGGLE_STATE', () => {
-        it('cycles new -> inProgress -> done -> inProgress', () => {
+        it('cycles new -> inProgress -> done -> new', () => {
             const state: TodoState = {
                 todos: [createTodo({ id: 1, state: 'new' })],
             };
@@ -67,7 +67,7 @@ describe('todoReducer', () => {
                 type: 'TOGGLE_STATE',
                 payload: 1,
             });
-            expect(afterDone.todos[0].state).toBe('inProgress');
+            expect(afterDone.todos[0].state).toBe('new');
         });
     });
 
