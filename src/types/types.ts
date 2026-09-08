@@ -10,6 +10,7 @@ export type TodoItemStateKey = keyof typeof TodoItemState;
 export type TodoItem = {
     id: number;
     name: string;
+    description: string;
     state: TodoItemStateKey;
 };
 
@@ -20,6 +21,7 @@ export type TodoState = {
 };
 
 export type TodoAction =
-    | { type: 'NEW_ITEM'; payload: string }
+    | { type: 'NEW_ITEM'; payload: { name: string; description: string } }
     | { type: 'TOGGLE_STATE'; payload: number }
-    | { type: 'DELETE_ITEM'; payload: number };
+    | { type: 'DELETE_ITEM'; payload: number }
+    | { type: 'UPDATE_ITEM'; payload: { id: number; name: string; description: string } };

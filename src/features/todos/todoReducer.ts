@@ -17,9 +17,15 @@ const nextTodoId = (todos: TodoItem[]): number => {
 export const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
     switch (action.type) {
         case 'NEW_ITEM': {
+            const name = action.payload.name.trim();
+            if (!name) {
+                return state;
+            }
+
             const newTodo: TodoItem = {
                 id: nextTodoId(state.todos),
-                name: action.payload,
+                name,
+                description: action.payload.description.trim(),
                 state: 'new',
             };
 
@@ -47,6 +53,27 @@ export const todoReducer = (state: TodoState, action: TodoAction): TodoState => 
             return {
                 ...state,
                 todos: state.todos.filter((todo) => todo.id !== action.payload),
+            };
+        }
+        case 'UPDATE_ITEM': {
+            const name = action.payload.name.trim();
+            if (!name) {
+                return state;
+            }
+
+            return {
+                ...state,
+                todos: state.todos.map((todo) => {
+                    if (todo.id !== action.payload.id) {
+                        return todo;
+                    }
+
+                    return {
+                        ...todo,
+                        name,
+                        description: action.payload.description.trim(),
+                    };
+                }),
             };
         }
         default:

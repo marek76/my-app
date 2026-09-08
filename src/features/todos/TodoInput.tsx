@@ -1,34 +1,54 @@
 import { useState, type ChangeEvent, type SyntheticEvent } from 'react';
 import { useStore } from '../../context/useStore';
+import './TodoInput.css';
 
 export const TodoInput = () => {
-    const [value, setValue] = useState('');
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
     const { dispatch } = useStore();
 
     const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!value.trim()) return;
+        if (!name.trim()) return;
 
         dispatch({
             type: 'NEW_ITEM',
-            payload: value.trim(),
+            payload: {
+                name: name.trim(),
+                description: description.trim(),
+            },
         });
 
-        setValue('');
+        setName('');
+        setDescription('');
     };
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
+    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+    };
+
+    const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setDescription(event.target.value);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="todoInput" onSubmit={handleSubmit}>
+            <label htmlFor="newTask">Name</label>
             <input
                 id="newTask"
                 type="text"
-                value={value}
-                onChange={handleChange}
+                value={name}
+                onChange={handleNameChange}
             />
+
+            <label htmlFor="newTaskDescription">Description</label>
+            <textarea
+                id="newTaskDescription"
+                value={description}
+                onChange={handleDescriptionChange}
+                rows={3}
+            />
+
             <button type="submit">
                 Add new task
             </button>
