@@ -1,0 +1,18 @@
+.todoFilter {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}
+
+.todoFilter button {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+}
+
+.todoFilter button.isActive {
+    text-decoration: underline;
+    font-weight: 600;
+}

@@ -13,6 +13,8 @@ export type TodoItem = {
     state: TodoItemStateKey;
 };
 
+export type TodoFilter = 'all' | 'active' | 'completed';
+
 export type TodoState = {
     todos: TodoItem[];
 };

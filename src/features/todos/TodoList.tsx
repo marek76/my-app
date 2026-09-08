@@ -1,10 +1,15 @@
 import { useStore } from '../../context/useStore';
-import type { TodoItem } from '../../types/types';
+import type { TodoFilter, TodoItem } from '../../types/types';
+import { filterTodos } from './filterTodos';
 import './TodoList.css';
 
-export const TodoList = () => {
+type TodoListProps = {
+    filter: TodoFilter;
+};
+
+export const TodoList = ({ filter }: TodoListProps) => {
     const { state, dispatch } = useStore();
-    const todos = state.todos;
+    const todos = filterTodos(state.todos, filter);
 
     const toggleState = (id: number) => {
         dispatch({
