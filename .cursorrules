@@ -4,11 +4,18 @@
 Vždy se říď pravidly, protokoly a definicí agentů popsanými v souboru `AGENTS.md`.
 
 ## Pravidla pro provádění úkolů
-1. Kdykoliv dostaneš za úkol zkontrolovat kód, opravit chyby nebo připravit PR, **vždy postupuj podle třífázového cyklu v AGENTS.md**:
-   - **Krok 1:** Spusť testy a kontrolu kódu (Agent 1).
-   - **Krok 2:** Pokud testy selžou, oprav chyby v kódu a vrať se ke Kroku 1 (Agent 2).
-   - **Krok 3:** Jakmile testy projdou, zkontroluj Git změny, vytvoř větev, commitni a připrav PR (Agent 3).
 
-2. **Formátování odpovídání:**
-   - Na začátku každé fáze explicitně uveď, za kterého agenta aktuálně jednáš (např. `[Agent 1: Tester]`, `[Agent 2: Fixer]`, `[Agent 3: Git & PR]`).
-   - Při vytváření commitů používej výhradně konvenci **Conventional Commits** (`fix:`, `feat:`, `refactor:`, `test:`).
+### A. Vývoj nové funkce (Feature Workflow)
+Kdykoliv dostaneš za úkol vytvořit novou feature nebo funkčnost, **postupuj podle Feature cyklu v AGENTS.md**:
+1. **Krok 1 (Agent 0 - Prep & Branch):** Otestuj výchozí stav, vytvoř novou `feature/` větev.
+2. **Krok 2 (Agent 4 - Developer):** Implementuj novou feature včetně unit/integračních testů.
+3. **Krok 3 (Agent 1 - Tester):** Spusť kompletní sadu testů a linter.
+4. **Krok 4 (Agent 2 - Fixer):** V případě chyb oprav kód (smyčka s Agentem 1).
+5. **Krok 5 (Agent 3 - Git & PR):** Commitni změny, pushni větev a vytvoř PR.
+
+### B. Opravy a Refaktoring (Maintenance Workflow)
+Pokud jde pouze o opravu chyb nebo kontrolu kódu, postupuj podle 3-fázového cyklu (Agent 1 -> Agent 2 -> Agent 3).
+
+## Formátování odpovídání
+- Na začátku každé fáze explicitně uveď, za kterého agenta aktuálně jednáš (např. `[Agent 0: Prep & Branch]`, `[Agent 4: Developer]`, `[Agent 1: Tester]`, `[Agent 3: Git & PR]`).
+- Při vytváření commitů používej výhradně konvenci **Conventional Commits** (`feat:`, `fix:`, `test:`, `refactor:`).
