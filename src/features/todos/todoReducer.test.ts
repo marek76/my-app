@@ -71,6 +71,54 @@ describe('todoReducer', () => {
         });
     });
 
+    describe('DELETE_ITEM', () => {
+        it('deletes a task', () => {
+            const state: TodoState = {
+                todos: [createTodo({ id: 1, name: 'Write tests' })],
+            };
+
+            const nextState = todoReducer(state, {
+                type: 'DELETE_ITEM',
+                payload: 1,
+            });
+
+            expect(nextState.todos).toEqual([]);
+        });
+
+        it('removes the todo with the given id', () => {
+            const state: TodoState = {
+                todos: [
+                    createTodo({ id: 1, name: 'Keep' }),
+                    createTodo({ id: 2, name: 'Remove' }),
+                    createTodo({ id: 3, name: 'Also keep' }),
+                ],
+            };
+
+            const nextState = todoReducer(state, {
+                type: 'DELETE_ITEM',
+                payload: 2,
+            });
+
+            expect(nextState.todos).toEqual([
+                createTodo({ id: 1, name: 'Keep' }),
+                createTodo({ id: 3, name: 'Also keep' }),
+            ]);
+        });
+
+        it('returns an equivalent todos list when id is missing', () => {
+            const state: TodoState = {
+                todos: [createTodo({ id: 1 })],
+            };
+
+            const nextState = todoReducer(state, {
+                type: 'DELETE_ITEM',
+                payload: 99,
+            });
+
+            expect(nextState.todos).toEqual(state.todos);
+        });
+    });
+
     it('returns the original state for an unknown action', () => {
         const state: TodoState = {
             todos: [createTodo()],

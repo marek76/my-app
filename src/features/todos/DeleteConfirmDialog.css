@@ -1,0 +1,48 @@
+.deleteConfirmOverlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.deleteConfirmDialog {
+    width: min(360px, calc(100% - 2rem));
+    padding: 1.25rem;
+    border: 1px solid currentColor;
+    background: var(--bg, #fff);
+    color: var(--text-h, inherit);
+}
+
+.deleteConfirmDialog p {
+    margin: 0 0 1rem;
+}
+
+.deleteConfirmActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.deleteConfirmActions button {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+}
+
+.deleteConfirmActions button:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.deleteConfirmActions button.isDanger {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.deleteConfirmActions button.isDanger:hover {
+    background-color: color-mix(in srgb, #c0392b 12%, transparent);
+}

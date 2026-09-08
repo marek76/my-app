@@ -21,4 +21,5 @@ export type TodoState = {
 
 export type TodoAction =
     | { type: 'NEW_ITEM'; payload: string }
-    | { type: 'TOGGLE_STATE'; payload: number };
+    | { type: 'TOGGLE_STATE'; payload: number }
+    | { type: 'DELETE_ITEM'; payload: number };
