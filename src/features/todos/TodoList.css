@@ -44,7 +44,7 @@
     justify-content: center;
     border: 0;
     background: transparent;
-    color: inherit;
+    color: #c0392b;
     padding: 0.25rem;
     cursor: pointer;
     opacity: 0.7;
@@ -52,4 +52,5 @@
 
 .todoDelete:hover {
     opacity: 1;
+    color: #c0392b;
 }

@@ -72,6 +72,19 @@ describe('todoReducer', () => {
     });
 
     describe('DELETE_ITEM', () => {
+        it('deletes a task', () => {
+            const state: TodoState = {
+                todos: [createTodo({ id: 1, name: 'Write tests' })],
+            };
+
+            const nextState = todoReducer(state, {
+                type: 'DELETE_ITEM',
+                payload: 1,
+            });
+
+            expect(nextState.todos).toEqual([]);
+        });
+
         it('removes the todo with the given id', () => {
             const state: TodoState = {
                 todos: [
