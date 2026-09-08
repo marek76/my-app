@@ -3,8 +3,8 @@ import { filterTodos } from './filterTodos';
 import type { TodoItem } from '../../types/types';
 
 const todos: TodoItem[] = [
-    { id: 1, name: 'New task', state: 'new' },
-    { id: 2, name: 'Active task', state: 'inProgress' },
+    { id: 1, name: 'Open task', state: 'new' },
+    { id: 2, name: 'In progress task', state: 'inProgress' },
     { id: 3, name: 'Done task', state: 'done' },
 ];
 
@@ -13,15 +13,20 @@ describe('filterTodos', () => {
         expect(filterTodos(todos, 'all')).toEqual(todos);
     });
 
-    it('returns only incomplete todos for filter "active"', () => {
-        expect(filterTodos(todos, 'active')).toEqual([
-            { id: 1, name: 'New task', state: 'new' },
-            { id: 2, name: 'Active task', state: 'inProgress' },
+    it('returns only new todos for filter "open"', () => {
+        expect(filterTodos(todos, 'open')).toEqual([
+            { id: 1, name: 'Open task', state: 'new' },
         ]);
     });
 
-    it('returns only done todos for filter "completed"', () => {
-        expect(filterTodos(todos, 'completed')).toEqual([
+    it('returns only in-progress todos for filter "inProgress"', () => {
+        expect(filterTodos(todos, 'inProgress')).toEqual([
+            { id: 2, name: 'In progress task', state: 'inProgress' },
+        ]);
+    });
+
+    it('returns only done todos for filter "done"', () => {
+        expect(filterTodos(todos, 'done')).toEqual([
             { id: 3, name: 'Done task', state: 'done' },
         ]);
     });
