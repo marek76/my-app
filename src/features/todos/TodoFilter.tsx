@@ -3,8 +3,9 @@ import './TodoFilter.css';
 
 const FILTERS: { value: TodoFilterValue; label: string }[] = [
     { value: 'all', label: 'All' },
-    { value: 'active', label: 'Active' },
-    { value: 'completed', label: 'Completed' },
+    { value: 'open', label: 'Open' },
+    { value: 'inProgress', label: 'In Progress' },
+    { value: 'done', label: 'Done' },
 ];
 
 type TodoFilterProps = {
