@@ -1,0 +1,18 @@
+.todoList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.todoItem {
+    &.done {
+        color: green;
+        text-decoration: line-through;
+    }
+    &.new {
+        color: lightblue;
+    }
+    &.inProgress {
+        color: yellow;
+    }
+}
