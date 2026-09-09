@@ -13,7 +13,7 @@ export type JobItemFields = {
     position: string;
     description: string;
     openDate: Date;
-    submissionDate: Date;
+    submissionDate: Date | null;
 };
 
 export type JobItem = JobItemFields & {

@@ -37,9 +37,8 @@ const normalizeJobs = (value: unknown): JobItem[] => {
                 : '';
         const position = typeof candidate.position === 'string' ? candidate.position : '';
         const openDate = parseStoredDate(candidate.openDate);
-        const submissionDate = parseStoredDate(candidate.submissionDate);
 
-        if (!companyName || !position || openDate === null || submissionDate === null) {
+        if (!companyName || !position || openDate === null) {
             return [];
         }
 
@@ -53,7 +52,7 @@ const normalizeJobs = (value: unknown): JobItem[] => {
             position,
             description: typeof candidate.description === 'string' ? candidate.description : '',
             openDate,
-            submissionDate,
+            submissionDate: parseStoredDate(candidate.submissionDate),
             state,
         }];
     });

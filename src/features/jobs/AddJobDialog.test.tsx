@@ -9,9 +9,7 @@ const fillRequiredFields = async () => {
 
     await user.type(screen.getByLabelText('Company'), '  Acme  ');
     await user.type(screen.getByLabelText('Position'), '  Frontend developer  ');
-    await user.type(screen.getByLabelText('Description'), '  Remote role  ');
     fireEvent.change(screen.getByLabelText('Open date'), { target: { value: '2026-09-01' } });
-    fireEvent.change(screen.getByLabelText('Submission date'), { target: { value: '2026-09-09' } });
 
     return user;
 };
@@ -86,12 +84,32 @@ describe('AddJobDialog', () => {
         expect(onAdd).not.toHaveBeenCalled();
     });
 
+    it('calls onAdd with only required fields when optional fields are empty', async () => {
+        const onAdd = vi.fn();
+
+        render(<AddJobDialog onCancel={vi.fn()} onAdd={onAdd} />);
+
+        const user = await fillRequiredFields();
+        await user.click(screen.getByRole('button', { name: 'Add' }));
+
+        expect(onAdd).toHaveBeenCalledOnce();
+        expect(onAdd).toHaveBeenCalledWith({
+            companyName: 'Acme',
+            position: 'Frontend developer',
+            description: '',
+            openDate: parseDateInput('2026-09-01'),
+            submissionDate: null,
+        });
+    });
+
     it('calls onAdd with trimmed values and parsed dates', async () => {
         const onAdd = vi.fn();
 
         render(<AddJobDialog onCancel={vi.fn()} onAdd={onAdd} />);
 
         const user = await fillRequiredFields();
+        await user.type(screen.getByLabelText('Description'), '  Remote role  ');
+        fireEvent.change(screen.getByLabelText('Submission date'), { target: { value: '2026-09-09' } });
         await user.click(screen.getByRole('button', { name: 'Add' }));
 
         expect(onAdd).toHaveBeenCalledOnce();

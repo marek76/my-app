@@ -194,6 +194,36 @@ describe('jobReducer', () => {
 
             expect(nextState).toBe(state);
         });
+
+        it('adds a job when submissionDate is missing', () => {
+            const state: JobState = { jobs: [] };
+
+            const nextState = jobReducer(state, {
+                type: 'NEW_ITEM',
+                payload: jobFields({
+                    submissionDate: null,
+                }),
+            });
+
+            expect(nextState.jobs[0]).toMatchObject({
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                submissionDate: null,
+            });
+        });
+
+        it('adds a job with null submissionDate when the date is invalid', () => {
+            const state: JobState = { jobs: [] };
+
+            const nextState = jobReducer(state, {
+                type: 'NEW_ITEM',
+                payload: jobFields({
+                    submissionDate: new Date('invalid'),
+                }),
+            });
+
+            expect(nextState.jobs[0].submissionDate).toBeNull();
+        });
     });
 
     describe('DELETE_ITEM', () => {
@@ -311,6 +341,27 @@ describe('jobReducer', () => {
                     state: 'applied',
                 }),
             );
+        });
+
+        it('can clear the submission date', () => {
+            const state: JobState = {
+                jobs: [
+                    createJob({ id: 1, companyName: 'Job', submissionDate }),
+                ],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'UPDATE_ITEM',
+                payload: {
+                    id: 1,
+                    ...jobFields({
+                        companyName: 'Job',
+                        submissionDate: null,
+                    }),
+                },
+            });
+
+            expect(nextState.jobs[0].submissionDate).toBeNull();
         });
 
         it('can clear the description', () => {

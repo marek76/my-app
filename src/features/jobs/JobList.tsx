@@ -46,6 +46,17 @@ const TrashIcon = () => (
 
 const formatJobDate = (date: Date): string => toDateInputValue(date);
 
+const formatJobMeta = (job: JobItem): string => {
+    const parts = [`Open ${formatJobDate(job.openDate)}`];
+
+    if (job.submissionDate !== null) {
+        parts.push(`Submit ${formatJobDate(job.submissionDate)}`);
+    }
+
+    parts.push(JobItemState[job.state]);
+    return parts.join(' · ');
+};
+
 export const JobList = ({ filter }: JobListProps) => {
     const { state, dispatch } = useStore();
     const jobs = filterJobs(state.jobs, filter);
@@ -95,7 +106,7 @@ export const JobList = ({ filter }: JobListProps) => {
                                 <p className="jobItemDescription">{job.description}</p>
                             ) : null}
                             <p className="jobItemMeta">
-                                Open {formatJobDate(job.openDate)} · Submit {formatJobDate(job.submissionDate)} · {JobItemState[job.state]}
+                                {formatJobMeta(job)}
                             </p>
                         </div>
                         <button

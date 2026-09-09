@@ -14,13 +14,14 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
     const [position, setPosition] = useState(job.position);
     const [description, setDescription] = useState(job.description);
     const [openDate, setOpenDate] = useState(toDateInputValue(job.openDate));
-    const [submissionDate, setSubmissionDate] = useState(toDateInputValue(job.submissionDate));
+    const [submissionDate, setSubmissionDate] = useState(
+        job.submissionDate === null ? '' : toDateInputValue(job.submissionDate),
+    );
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const parsedOpenDate = parseDateInput(openDate);
-        const parsedSubmissionDate = parseDateInput(submissionDate);
-        if (!companyName.trim() || !position.trim() || parsedOpenDate === null || parsedSubmissionDate === null) {
+        if (!companyName.trim() || !position.trim() || parsedOpenDate === null) {
             return;
         }
 
@@ -29,7 +30,7 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
             position: position.trim(),
             description: description.trim(),
             openDate: parsedOpenDate,
-            submissionDate: parsedSubmissionDate,
+            submissionDate: parseDateInput(submissionDate),
         });
     };
 
@@ -106,7 +107,6 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
                         type="date"
                         value={submissionDate}
                         onChange={handleSubmissionDateChange}
-                        required
                     />
 
                     <div className="editJobActions">
