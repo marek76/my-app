@@ -8,6 +8,7 @@
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
+    padding: 0.75rem 0;
 
     &.new {
         color: lightblue;
@@ -21,6 +22,10 @@
     &.rejected {
         color: #c0392b;
     }
+}
+
+.jobItem + .jobItem {
+    border-top: 1px solid var(--border);
 }
 
 .jobItemContent {

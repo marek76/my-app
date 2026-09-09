@@ -30,4 +30,5 @@ export type JobState = {
 export type JobAction =
     | { type: 'NEW_ITEM'; payload: JobItemFields }
     | { type: 'DELETE_ITEM'; payload: number }
-    | { type: 'UPDATE_ITEM'; payload: JobItemFields & { id: number } };
+    | { type: 'UPDATE_ITEM'; payload: JobItemFields & { id: number } }
+    | { type: 'SET_STATE'; payload: { id: number; state: JobItemStateKey } };
