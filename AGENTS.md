@@ -63,7 +63,7 @@ Při vývoji nové funkce postupují agenti v tomto sekvenčním pořadí:
   2. Přidej změněné soubory: `git add .`
   3. Vytvoř commit s konvencí **Conventional Commits** (např. `feat(jobs): add priority field`).
   4. Pushni větev na vzdálený repozitář: `git push -u origin <nazev-vetve>`
-  5. Vytvoř Pull Request pomocí GitHub CLI: `gh pr create --title "feat: <nazev>" --body "<popis-změn>"` (nebo připrav odkaz a popis pro ruční vytvoření).
+  5. Vytvoř Pull Request pomocí GitHub CLI: `"C:\Program Files\GitHub CLI\gh.exe" pr create --title "feat: <nazev>" --body "<popis-změn>"` (nebo připrav odkaz a popis pro ruční vytvoření).
 
 ---
 
