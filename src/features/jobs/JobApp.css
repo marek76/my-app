@@ -1,0 +1,15 @@
+.jobApp {
+    width: 480px;
+    margin: 0 auto;
+}
+
+.jobAppHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.jobAppHeader h2 {
+    margin: 0;
+}

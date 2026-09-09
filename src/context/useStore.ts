@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { TodoContext } from './todoContext';
+import { JobContext } from './jobContext';
 
 export const useStore = () => {
-    const context = useContext(TodoContext);
+    const context = useContext(JobContext);
     if (!context) {
-        throw new Error('useStore must be used inside TodoProvider');
+        throw new Error('useStore must be used inside JobProvider');
     }
 
     return context;

@@ -15,7 +15,7 @@ export const DeleteConfirmDialog = ({ onConfirm, onCancel }: DeleteConfirmDialog
                 aria-labelledby="delete-confirm-title"
                 onClick={(event) => event.stopPropagation()}
             >
-                <p id="delete-confirm-title">Are you sure you want to delete this task?</p>
+                <p id="delete-confirm-title">Are you sure you want to delete this job?</p>
                 <div className="deleteConfirmActions">
                     <button type="button" onClick={onCancel}>
                         Cancel

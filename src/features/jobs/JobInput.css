@@ -1,0 +1,11 @@
+.addJobButton {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+}
+
+.addJobButton:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
