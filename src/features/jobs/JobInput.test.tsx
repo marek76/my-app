@@ -91,4 +91,32 @@ describe('JobInput add action', () => {
             state: 'new',
         });
     });
+
+    it('adds a job with only company, position, and open date', async () => {
+        renderJobInput();
+
+        const openUser = userEvent.setup();
+        await openUser.click(screen.getByRole('button', { name: 'Add Job' }));
+
+        const user = userEvent.setup();
+        await user.type(screen.getByLabelText('Company'), 'Acme');
+        await user.type(screen.getByLabelText('Position'), 'Frontend developer');
+        fireEvent.change(screen.getByLabelText('Open date'), { target: { value: '2026-09-01' } });
+        await user.click(screen.getByRole('button', { name: 'Add' }));
+
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as Array<{
+            companyName: string;
+            position: string;
+            description: string;
+            submissionDate: string | null;
+        }>;
+
+        expect(saved).toHaveLength(1);
+        expect(saved[0]).toMatchObject({
+            companyName: 'Acme',
+            position: 'Frontend developer',
+            description: '',
+            submissionDate: null,
+        });
+    });
 });

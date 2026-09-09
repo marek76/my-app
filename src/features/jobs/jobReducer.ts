@@ -13,9 +13,11 @@ const normalizeJobFields = (fields: JobItemFields): JobItemFields | null => {
     const companyName = fields.companyName.trim();
     const position = fields.position.trim();
     const openDate = cloneDate(fields.openDate);
-    const submissionDate = cloneDate(fields.submissionDate);
+    const submissionDate = fields.submissionDate === null
+        ? null
+        : cloneDate(fields.submissionDate);
 
-    if (!companyName || !position || openDate === null || submissionDate === null) {
+    if (!companyName || !position || openDate === null) {
         return null;
     }
 

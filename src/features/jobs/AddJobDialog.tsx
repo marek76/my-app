@@ -18,8 +18,7 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const parsedOpenDate = parseDateInput(openDate);
-        const parsedSubmissionDate = parseDateInput(submissionDate);
-        if (!companyName.trim() || !position.trim() || parsedOpenDate === null || parsedSubmissionDate === null) {
+        if (!companyName.trim() || !position.trim() || parsedOpenDate === null) {
             return;
         }
 
@@ -28,7 +27,7 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
             position: position.trim(),
             description: description.trim(),
             openDate: parsedOpenDate,
-            submissionDate: parsedSubmissionDate,
+            submissionDate: parseDateInput(submissionDate),
         });
     };
 
@@ -105,7 +104,6 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                         type="date"
                         value={submissionDate}
                         onChange={handleSubmissionDateChange}
-                        required
                     />
 
                     <div className="addJobActions">
