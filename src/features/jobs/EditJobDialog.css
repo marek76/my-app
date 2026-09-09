@@ -1,0 +1,62 @@
+.editJobOverlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.editJobDialog {
+    width: min(420px, calc(100% - 2rem));
+    padding: 1.25rem;
+    border: 1px solid currentColor;
+    background: var(--bg, #fff);
+    color: var(--text-h, inherit);
+}
+
+.editJobDialog h3 {
+    margin: 0 0 1rem;
+}
+
+.editJobDialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.editJobDialog label {
+    font-size: 0.9rem;
+}
+
+.editJobDialog input,
+.editJobDialog textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid currentColor;
+    padding: 0.4rem 0.5rem;
+    resize: vertical;
+}
+
+.editJobActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.editJobActions button {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+}
+
+.editJobActions button:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}

@@ -1,13 +1,10 @@
-import { TodoApp } from './features/todos/TodoApp';
+import { JobApp } from './features/jobs/JobApp';
 
 function App() {
     return (
         <section id="center">
-            <header>
-                <p>...my apps</p>
-            </header>
             <main>
-                <TodoApp />
+                <JobApp />
             </main>
         </section>
     );

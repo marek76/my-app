@@ -1,10 +1,11 @@
-.todoFilter {
+.jobFilter {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin: 0.75rem 0;
 }
 
-.todoFilter button {
+.jobFilter button {
     border: 1px solid currentColor;
     background: transparent;
     color: inherit;
@@ -13,15 +14,15 @@
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.todoFilter button:hover {
+.jobFilter button:hover {
     background-color: color-mix(in srgb, currentColor 12%, transparent);
 }
 
-.todoFilter button.isActive {
+.jobFilter button.isActive {
     text-decoration: underline;
     font-weight: 600;
 }
 
-.todoFilter button.isActive:hover {
+.jobFilter button.isActive:hover {
     background-color: color-mix(in srgb, currentColor 18%, transparent);
 }

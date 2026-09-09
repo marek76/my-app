@@ -1,27 +1,33 @@
-export const TodoItemState = {
+export const JobItemState = {
     new: 'New',
-    inProgress: 'In progress',
-    done: 'Done',
+    applied: 'Applied',
+    accepted: 'Accepted',
+    rejected: 'Rejected',
 } as const;
 
-export type TodoItemState = typeof TodoItemState[keyof typeof TodoItemState];
-export type TodoItemStateKey = keyof typeof TodoItemState;
+export type JobItemState = typeof JobItemState[keyof typeof JobItemState];
+export type JobItemStateKey = keyof typeof JobItemState;
 
-export type TodoItem = {
-    id: number;
-    name: string;
+export type JobItemFields = {
+    companyName: string;
+    position: string;
     description: string;
-    state: TodoItemStateKey;
+    openDate: Date;
+    submissionDate: Date;
 };
 
-export type TodoFilter = 'all' | 'open' | 'inProgress' | 'done';
-
-export type TodoState = {
-    todos: TodoItem[];
+export type JobItem = JobItemFields & {
+    id: number;
+    state: JobItemStateKey;
 };
 
-export type TodoAction =
-    | { type: 'NEW_ITEM'; payload: { name: string; description: string } }
-    | { type: 'TOGGLE_STATE'; payload: number }
+export type JobFilter = 'all' | JobItemStateKey;
+
+export type JobState = {
+    jobs: JobItem[];
+};
+
+export type JobAction =
+    | { type: 'NEW_ITEM'; payload: JobItemFields }
     | { type: 'DELETE_ITEM'; payload: number }
-    | { type: 'UPDATE_ITEM'; payload: { id: number; name: string; description: string } };
+    | { type: 'UPDATE_ITEM'; payload: JobItemFields & { id: number } };

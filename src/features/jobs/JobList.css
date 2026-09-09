@@ -1,56 +1,57 @@
-.todoList {
+.jobList {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.todoItem {
+.jobItem {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
 
-    &.done {
-        color: green;
-    }
     &.new {
         color: lightblue;
     }
-    &.inProgress {
+    &.applied {
         color: yellow;
+    }
+    &.accepted {
+        color: green;
+    }
+    &.rejected {
+        color: #c0392b;
     }
 }
 
-.todoItemContent {
+.jobItemContent {
     flex: 1;
     min-width: 0;
 }
 
-.todoItem.done .todoItemName {
-    text-decoration: line-through;
+.jobItemCompany {
+    margin: 0;
+    font-weight: 600;
 }
 
-.todoItemName {
-    display: block;
-    width: 100%;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    text-decoration: inherit;
-    padding: 0.25rem 0;
-    cursor: pointer;
+.jobItemPosition {
+    margin: 0.15rem 0 0;
 }
 
-.todoItemDescription {
-    margin: 0 0 0.25rem;
+.jobItemDescription {
+    margin: 0.25rem 0 0;
     font-size: 0.85em;
     opacity: 0.85;
     white-space: pre-wrap;
 }
 
-.todoEdit,
-.todoDelete {
+.jobItemMeta {
+    margin: 0.25rem 0 0;
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.jobEdit,
+.jobDelete {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -62,23 +63,23 @@
     opacity: 0.7;
 }
 
-.todoEdit {
+.jobEdit {
     color: #87ceeb;
 }
 
-.todoDelete {
+.jobDelete {
     color: #c0392b;
 }
 
-.todoEdit:hover,
-.todoDelete:hover {
+.jobEdit:hover,
+.jobDelete:hover {
     opacity: 1;
 }
 
-.todoEdit:hover {
+.jobEdit:hover {
     color: #87ceeb;
 }
 
-.todoDelete:hover {
+.jobDelete:hover {
     color: #c0392b;
 }
