@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseDateInput, parseStoredDate, todayDateInputValue, toDateInputValue } from './jobDates';
+import { parseDateInput, parseStoredDate, todayDate, todayDateInputValue, toDateInputValue } from './jobDates';
 
 describe('jobDates', () => {
     afterEach(() => {
@@ -15,6 +15,13 @@ describe('jobDates', () => {
         vi.setSystemTime(new Date(2026, 8, 9, 15, 30, 0));
 
         expect(todayDateInputValue()).toBe('2026-09-09');
+    });
+
+    it('returns today as a local midnight Date', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(2026, 8, 9, 15, 30, 0));
+
+        expect(todayDate()).toEqual(new Date('2026-09-09T00:00:00'));
     });
 
     it('parses a valid date input value', () => {

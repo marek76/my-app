@@ -7,6 +7,8 @@ export const toDateInputValue = (date: Date): string => {
 
 export const todayDateInputValue = (): string => toDateInputValue(new Date());
 
+export const todayDate = (): Date => parseDateInput(todayDateInputValue()) ?? new Date();
+
 export const parseDateInput = (value: string): Date | null => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
         return null;

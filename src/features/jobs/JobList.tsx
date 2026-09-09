@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useStore } from '../../context/useStore';
 import type { JobFilter, JobItem, JobItemFields } from '../../types/types';
-import { JobItemState } from '../../types/types';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { EditJobDialog } from './EditJobDialog';
 import { filterJobs } from './filterJobs';
 import { toDateInputValue } from './jobDates';
+import { JobStateSelect } from './JobStateSelect';
 import './JobList.css';
 
 type JobListProps = {
@@ -46,14 +46,13 @@ const TrashIcon = () => (
 
 const formatJobDate = (date: Date): string => toDateInputValue(date);
 
-const formatJobMeta = (job: JobItem): string => {
+const formatJobDates = (job: JobItem): string => {
     const parts = [`Open ${formatJobDate(job.openDate)}`];
 
     if (job.submissionDate !== null) {
         parts.push(`Submit ${formatJobDate(job.submissionDate)}`);
     }
 
-    parts.push(JobItemState[job.state]);
     return parts.join(' · ');
 };
 
@@ -106,7 +105,19 @@ export const JobList = ({ filter }: JobListProps) => {
                                 <p className="jobItemDescription">{job.description}</p>
                             ) : null}
                             <p className="jobItemMeta">
-                                {formatJobMeta(job)}
+                                {formatJobDates(job)}
+                                {' · '}
+                                <JobStateSelect
+                                    companyName={job.companyName}
+                                    state={job.state}
+                                    onSelect={(nextState) => dispatch({
+                                        type: 'SET_STATE',
+                                        payload: {
+                                            id: job.id,
+                                            state: nextState,
+                                        },
+                                    })}
+                                />
                             </p>
                         </div>
                         <button

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { jobReducer } from './jobReducer';
 import type { JobAction, JobItem, JobItemFields, JobState } from '../../types/types';
 
@@ -446,6 +446,145 @@ describe('jobReducer', () => {
                         description: 'Changed',
                     }),
                 },
+            });
+
+            expect(nextState).toBe(state);
+        });
+    });
+
+    describe('SET_STATE', () => {
+        afterEach(() => {
+            vi.useRealTimers();
+        });
+
+        it('changes new to applied and sets submissionDate to today', () => {
+            vi.useFakeTimers();
+            vi.setSystemTime(new Date(2026, 8, 9, 15, 30, 0));
+
+            const state: JobState = {
+                jobs: [createJob({ id: 1, submissionDate: null, state: 'new' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'applied' },
+            });
+
+            expect(nextState.jobs[0].state).toBe('applied');
+            expect(nextState.jobs[0].submissionDate).toEqual(new Date('2026-09-09T00:00:00'));
+        });
+
+        it('overwrites an existing submissionDate when changing to applied', () => {
+            vi.useFakeTimers();
+            vi.setSystemTime(new Date(2026, 8, 9, 15, 30, 0));
+
+            const state: JobState = {
+                jobs: [createJob({
+                    id: 1,
+                    submissionDate: new Date('2026-08-01T00:00:00'),
+                    state: 'new',
+                })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'applied' },
+            });
+
+            expect(nextState.jobs[0].submissionDate).toEqual(new Date('2026-09-09T00:00:00'));
+        });
+
+        it('changes applied to accepted without changing submissionDate', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'applied' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'accepted' },
+            });
+
+            expect(nextState.jobs[0].state).toBe('accepted');
+            expect(nextState.jobs[0].submissionDate).toEqual(submissionDate);
+        });
+
+        it('changes applied to rejected without changing submissionDate', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'applied' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'rejected' },
+            });
+
+            expect(nextState.jobs[0].state).toBe('rejected');
+            expect(nextState.jobs[0].submissionDate).toEqual(submissionDate);
+        });
+
+        it('changes accepted to rejected', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'accepted' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'rejected' },
+            });
+
+            expect(nextState.jobs[0].state).toBe('rejected');
+        });
+
+        it('does not change other jobs', () => {
+            const state: JobState = {
+                jobs: [
+                    createJob({ id: 1, companyName: 'First', state: 'new' }),
+                    createJob({ id: 2, companyName: 'Second', state: 'applied' }),
+                ],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'applied' },
+            });
+
+            expect(nextState.jobs[1]).toEqual(state.jobs[1]);
+        });
+
+        it('ignores an invalid transition', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'new' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'accepted' },
+            });
+
+            expect(nextState).toBe(state);
+        });
+
+        it('ignores a change from rejected', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'rejected' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 1, state: 'applied' },
+            });
+
+            expect(nextState).toBe(state);
+        });
+
+        it('does not change jobs when id does not exist', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, state: 'new' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'SET_STATE',
+                payload: { id: 99, state: 'applied' },
             });
 
             expect(nextState).toBe(state);

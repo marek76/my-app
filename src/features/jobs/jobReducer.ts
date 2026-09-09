@@ -1,5 +1,6 @@
 import type { JobAction, JobItem, JobItemFields, JobState } from '../../types/types';
-import { cloneDate } from './jobDates';
+import { cloneDate, todayDate } from './jobDates';
+import { canSetJobState } from './jobStateTransitions';
 
 const nextJobId = (jobs: JobItem[]): number => {
     if (jobs.length === 0) {
@@ -71,6 +72,29 @@ export const jobReducer = (state: JobState, action: JobAction): JobState => {
                     return {
                         ...job,
                         ...fields,
+                    };
+                }),
+            };
+        }
+        case 'SET_STATE': {
+            const job = state.jobs.find((item) => item.id === action.payload.id);
+            if (!job || !canSetJobState(job.state, action.payload.state)) {
+                return state;
+            }
+
+            return {
+                ...state,
+                jobs: state.jobs.map((item) => {
+                    if (item.id !== action.payload.id) {
+                        return item;
+                    }
+
+                    return {
+                        ...item,
+                        state: action.payload.state,
+                        submissionDate: action.payload.state === 'applied'
+                            ? todayDate()
+                            : item.submissionDate,
                     };
                 }),
             };

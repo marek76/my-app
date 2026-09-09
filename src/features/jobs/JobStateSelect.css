@@ -1,0 +1,58 @@
+.jobStateSelect {
+    position: relative;
+    display: inline-block;
+}
+
+.jobStateSelectTrigger,
+.jobStateSelectLabel {
+    font: inherit;
+    color: inherit;
+}
+
+.jobStateSelectTrigger {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.jobStateSelectTrigger::after {
+    content: ' ▾';
+    font-size: 0.75em;
+}
+
+.jobStateSelectTrigger:hover,
+.jobStateSelectTrigger[aria-expanded='true'] {
+    opacity: 1;
+}
+
+.jobStateSelectMenu {
+    position: absolute;
+    top: calc(100% + 0.2rem);
+    left: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 0.25rem 0;
+    list-style: none;
+    min-width: 8rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    box-shadow: var(--shadow);
+}
+
+.jobStateSelectMenu button {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--text-h);
+    text-align: left;
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+}
+
+.jobStateSelectMenu button:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
