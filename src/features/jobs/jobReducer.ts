@@ -45,7 +45,7 @@ export const jobReducer = (state: JobState, action: JobAction): JobState => {
             const newJob: JobItem = {
                 id: nextJobId(state.jobs),
                 ...fields,
-                state: 'new',
+                state: fields.submissionDate !== null ? 'applied' : 'new',
             };
 
             return {

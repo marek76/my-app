@@ -24,7 +24,7 @@ const createJob = (overrides: Partial<JobItem> = {}): JobItem => ({
 
 describe('jobReducer', () => {
     describe('NEW_ITEM', () => {
-        it('creates a job with company, position, dates, state "new", and id 1 on empty list', () => {
+        it('creates a job with company, position, dates, state "applied", and id 1 when submission date is set', () => {
             const state: JobState = { jobs: [] };
 
             const nextState = jobReducer(state, {
@@ -45,7 +45,7 @@ describe('jobReducer', () => {
                     link: '',
                     openDate,
                     submissionDate,
-                    state: 'new',
+                    state: 'applied',
                 },
             ]);
         });
@@ -66,7 +66,7 @@ describe('jobReducer', () => {
                 companyName: 'Initech',
                 position: 'QA engineer',
                 description: '',
-                state: 'new',
+                state: 'applied',
             });
         });
 
@@ -92,7 +92,7 @@ describe('jobReducer', () => {
                     link: 'https://example.com/role',
                     openDate,
                     submissionDate,
-                    state: 'new',
+                    state: 'applied',
                 },
             ]);
         });
@@ -125,7 +125,7 @@ describe('jobReducer', () => {
                     link: '',
                     openDate,
                     submissionDate,
-                    state: 'new',
+                    state: 'applied',
                 },
             ]);
         });
@@ -155,7 +155,7 @@ describe('jobReducer', () => {
                 link: '',
                 openDate,
                 submissionDate,
-                state: 'new',
+                state: 'applied',
             });
         });
 
@@ -214,7 +214,7 @@ describe('jobReducer', () => {
             expect(nextState).toBe(state);
         });
 
-        it('adds a job when submissionDate is missing', () => {
+        it('adds a job with state "new" when submissionDate is missing', () => {
             const state: JobState = { jobs: [] };
 
             const nextState = jobReducer(state, {
@@ -228,10 +228,27 @@ describe('jobReducer', () => {
                 companyName: 'Acme',
                 position: 'Frontend developer',
                 submissionDate: null,
+                state: 'new',
             });
         });
 
-        it('adds a job with null submissionDate when the date is invalid', () => {
+        it('adds a job with state "applied" when submissionDate is set', () => {
+            const state: JobState = { jobs: [] };
+
+            const nextState = jobReducer(state, {
+                type: 'NEW_ITEM',
+                payload: jobFields({
+                    submissionDate,
+                }),
+            });
+
+            expect(nextState.jobs[0]).toMatchObject({
+                submissionDate,
+                state: 'applied',
+            });
+        });
+
+        it('adds a job with null submissionDate and state "new" when the date is invalid', () => {
             const state: JobState = { jobs: [] };
 
             const nextState = jobReducer(state, {
@@ -242,6 +259,7 @@ describe('jobReducer', () => {
             });
 
             expect(nextState.jobs[0].submissionDate).toBeNull();
+            expect(nextState.jobs[0].state).toBe('new');
         });
     });
 
