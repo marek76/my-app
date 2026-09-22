@@ -9,20 +9,31 @@ type AddJobDialogProps = {
     onAdd: (values: JobItemFields) => void;
 };
 
+type AddJobFormData = {
+    companyName: string;
+    position: string;
+    description: string;
+    link: string;
+    openDate: string;
+    submissionDate: string;
+};
+
 export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
-    const [companyName, setCompanyName] = useState('');
-    const [position, setPosition] = useState('');
-    const [description, setDescription] = useState('');
-    const [link, setLink] = useState('');
+    const [formData, setFormData] = useState<AddJobFormData>({
+        companyName: '',
+        position: '',
+        description: '',
+        link: '',
+        openDate: todayDateInputValue(),
+        submissionDate: '',
+    });
     const [linkError, setLinkError] = useState<string | null>(null);
-    const [openDate, setOpenDate] = useState(todayDateInputValue);
-    const [submissionDate, setSubmissionDate] = useState('');
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const parsedOpenDate = parseDateInput(openDate);
-        const trimmedLink = link.trim();
-        if (!companyName.trim() || !position.trim() || parsedOpenDate === null) {
+        const parsedOpenDate = parseDateInput(formData.openDate);
+        const trimmedLink = formData.link.trim();
+        if (!formData.companyName.trim() || !formData.position.trim() || parsedOpenDate === null) {
             return;
         }
 
@@ -33,40 +44,27 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
 
         setLinkError(null);
         onAdd({
-            companyName: companyName.trim(),
-            position: position.trim(),
-            description: description.trim(),
+            companyName: formData.companyName.trim(),
+            position: formData.position.trim(),
+            description: formData.description.trim(),
             link: trimmedLink,
             openDate: parsedOpenDate,
-            submissionDate: parseDateInput(submissionDate),
+            submissionDate: parseDateInput(formData.submissionDate),
         });
     };
 
-    const handleCompanyNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setCompanyName(event.target.value);
-    };
+    const handleChange = (
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        const { name, value } = event.target;
+        setFormData((current) => ({
+            ...current,
+            [name]: value,
+        }));
 
-    const handlePositionChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setPosition(event.target.value);
-    };
-
-    const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setDescription(event.target.value);
-    };
-
-    const handleLinkChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setLink(event.target.value);
-        if (linkError !== null) {
+        if (name === 'link' && linkError !== null) {
             setLinkError(null);
         }
-    };
-
-    const handleOpenDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setOpenDate(event.target.value);
-    };
-
-    const handleSubmissionDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setSubmissionDate(event.target.value);
     };
 
     return (
@@ -83,9 +81,10 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                     <label htmlFor="add-job-company">Company</label>
                     <input
                         id="add-job-company"
+                        name="companyName"
                         type="text"
-                        value={companyName}
-                        onChange={handleCompanyNameChange}
+                        value={formData.companyName}
+                        onChange={handleChange}
                         autoFocus
                         required
                     />
@@ -93,26 +92,29 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                     <label htmlFor="add-job-position">Position</label>
                     <input
                         id="add-job-position"
+                        name="position"
                         type="text"
-                        value={position}
-                        onChange={handlePositionChange}
+                        value={formData.position}
+                        onChange={handleChange}
                         required
                     />
 
                     <label htmlFor="add-job-description">Description</label>
                     <textarea
                         id="add-job-description"
-                        value={description}
-                        onChange={handleDescriptionChange}
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         rows={4}
                     />
 
                     <label htmlFor="add-job-link">Link</label>
                     <input
                         id="add-job-link"
+                        name="link"
                         type="url"
-                        value={link}
-                        onChange={handleLinkChange}
+                        value={formData.link}
+                        onChange={handleChange}
                         placeholder="https://"
                         aria-invalid={linkError !== null}
                         aria-describedby={linkError !== null ? 'add-job-link-error' : undefined}
@@ -126,18 +128,20 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                     <label htmlFor="add-job-open-date">Open date</label>
                     <input
                         id="add-job-open-date"
+                        name="openDate"
                         type="date"
-                        value={openDate}
-                        onChange={handleOpenDateChange}
+                        value={formData.openDate}
+                        onChange={handleChange}
                         required
                     />
 
                     <label htmlFor="add-job-submission-date">Submission date</label>
                     <input
                         id="add-job-submission-date"
+                        name="submissionDate"
                         type="date"
-                        value={submissionDate}
-                        onChange={handleSubmissionDateChange}
+                        value={formData.submissionDate}
+                        onChange={handleChange}
                     />
 
                     <div className="addJobActions">
