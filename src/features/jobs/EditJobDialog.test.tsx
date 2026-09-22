@@ -13,6 +13,7 @@ const job: JobItem = {
     companyName: 'Acme',
     position: 'Frontend developer',
     description: 'Remote role',
+    link: 'https://example.com/jobs/acme',
     openDate,
     submissionDate,
     state: 'new',
@@ -26,6 +27,7 @@ describe('EditJobDialog', () => {
         expect(screen.getByLabelText('Company')).toHaveValue('Acme');
         expect(screen.getByLabelText('Position')).toHaveValue('Frontend developer');
         expect(screen.getByLabelText('Description')).toHaveValue('Remote role');
+        expect(screen.getByLabelText('Link')).toHaveValue('https://example.com/jobs/acme');
         expect(screen.getByLabelText('Open date')).toHaveValue('2026-09-01');
         expect(screen.getByLabelText('Submission date')).toHaveValue('2026-09-09');
         expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -69,6 +71,8 @@ describe('EditJobDialog', () => {
         await user.type(screen.getByLabelText('Position'), '  Backend developer  ');
         await user.clear(screen.getByLabelText('Description'));
         await user.type(screen.getByLabelText('Description'), '  Onsite  ');
+        await user.clear(screen.getByLabelText('Link'));
+        await user.type(screen.getByLabelText('Link'), '  https://example.com/jobs/2  ');
         fireEvent.change(screen.getByLabelText('Open date'), { target: { value: '2026-10-01' } });
         fireEvent.change(screen.getByLabelText('Submission date'), { target: { value: '2026-10-15' } });
         await user.click(screen.getByRole('button', { name: 'Update' }));
@@ -78,18 +82,20 @@ describe('EditJobDialog', () => {
             companyName: 'Globex',
             position: 'Backend developer',
             description: 'Onsite',
+            link: 'https://example.com/jobs/2',
             openDate: parseDateInput('2026-10-01'),
             submissionDate: parseDateInput('2026-10-15'),
         });
     });
 
-    it('allows clearing optional description and submission date', async () => {
+    it('allows clearing optional description, link, and submission date', async () => {
         const user = userEvent.setup();
         const onUpdate = vi.fn();
 
         render(<EditJobDialog job={job} onCancel={vi.fn()} onUpdate={onUpdate} />);
 
         await user.clear(screen.getByLabelText('Description'));
+        await user.clear(screen.getByLabelText('Link'));
         fireEvent.change(screen.getByLabelText('Submission date'), { target: { value: '' } });
         await user.click(screen.getByRole('button', { name: 'Update' }));
 
@@ -98,8 +104,25 @@ describe('EditJobDialog', () => {
             companyName: 'Acme',
             position: 'Frontend developer',
             description: '',
+            link: '',
             openDate,
             submissionDate: null,
         });
+    });
+
+    it('does not call onUpdate when link is not a valid URL', async () => {
+        const user = userEvent.setup();
+        const onUpdate = vi.fn();
+
+        render(<EditJobDialog job={job} onCancel={vi.fn()} onUpdate={onUpdate} />);
+
+        await user.clear(screen.getByLabelText('Link'));
+        await user.type(screen.getByLabelText('Link'), 'example.com');
+        await user.click(screen.getByRole('button', { name: 'Update' }));
+
+        expect(onUpdate).not.toHaveBeenCalled();
+        expect(screen.getByRole('alert')).toHaveTextContent(
+            'Enter a valid http or https URL.',
+        );
     });
 });

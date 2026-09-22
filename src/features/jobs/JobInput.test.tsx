@@ -88,6 +88,7 @@ describe('JobInput add action', () => {
             companyName: 'Globex',
             position: 'Backend developer',
             description: 'Remote role',
+            link: '',
             state: 'new',
         });
     });
@@ -108,6 +109,7 @@ describe('JobInput add action', () => {
             companyName: string;
             position: string;
             description: string;
+            link: string;
             submissionDate: string | null;
         }>;
 
@@ -116,6 +118,7 @@ describe('JobInput add action', () => {
             companyName: 'Acme',
             position: 'Frontend developer',
             description: '',
+            link: '',
             submissionDate: null,
         });
     });

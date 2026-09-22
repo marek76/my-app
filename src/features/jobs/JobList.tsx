@@ -104,6 +104,16 @@ export const JobList = ({ filter }: JobListProps) => {
                             {job.description ? (
                                 <p className="jobItemDescription">{job.description}</p>
                             ) : null}
+                            {job.link ? (
+                                <a
+                                    className="jobItemLink"
+                                    href={job.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {job.link}
+                                </a>
+                            ) : null}
                             <p className="jobItemMeta">
                                 {formatJobDates(job)}
                                 {' · '}

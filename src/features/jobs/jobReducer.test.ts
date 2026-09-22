@@ -9,6 +9,7 @@ const jobFields = (overrides: Partial<JobItemFields> = {}): JobItemFields => ({
     companyName: 'Acme',
     position: 'Frontend developer',
     description: '',
+    link: '',
     openDate,
     submissionDate,
     ...overrides,
@@ -41,6 +42,7 @@ describe('jobReducer', () => {
                     companyName: 'Globex',
                     position: 'Backend developer',
                     description: 'Remote role',
+                    link: '',
                     openDate,
                     submissionDate,
                     state: 'new',
@@ -68,7 +70,7 @@ describe('jobReducer', () => {
             });
         });
 
-        it('trims company name, position, and description before saving', () => {
+        it('trims company name, position, description, and link before saving', () => {
             const state: JobState = { jobs: [] };
 
             const nextState = jobReducer(state, {
@@ -77,6 +79,7 @@ describe('jobReducer', () => {
                     companyName: '  Initech  ',
                     position: '  QA engineer  ',
                     description: '  morning slot  ',
+                    link: '  https://example.com/role  ',
                 }),
             });
 
@@ -86,6 +89,7 @@ describe('jobReducer', () => {
                     companyName: 'Initech',
                     position: 'QA engineer',
                     description: 'morning slot',
+                    link: 'https://example.com/role',
                     openDate,
                     submissionDate,
                     state: 'new',
@@ -118,6 +122,7 @@ describe('jobReducer', () => {
                     companyName: 'Second',
                     position: 'PM',
                     description: 'New notes',
+                    link: '',
                     openDate,
                     submissionDate,
                     state: 'new',
@@ -147,6 +152,7 @@ describe('jobReducer', () => {
                 companyName: 'Next job',
                 position: 'Analyst',
                 description: 'Details',
+                link: '',
                 openDate,
                 submissionDate,
                 state: 'new',
@@ -189,6 +195,19 @@ describe('jobReducer', () => {
                 type: 'NEW_ITEM',
                 payload: jobFields({
                     openDate: new Date('invalid'),
+                }),
+            });
+
+            expect(nextState).toBe(state);
+        });
+
+        it('does not add a job when link is not a valid URL', () => {
+            const state: JobState = { jobs: [] };
+
+            const nextState = jobReducer(state, {
+                type: 'NEW_ITEM',
+                payload: jobFields({
+                    link: 'example.com',
                 }),
             });
 
@@ -292,6 +311,7 @@ describe('jobReducer', () => {
                     companyName: '  New name  ',
                     position: '  Lead  ',
                     description: '  Updated notes  ',
+                    link: '  https://example.com/job  ',
                     openDate: laterOpenDate,
                     submissionDate: laterSubmissionDate,
                 },
@@ -303,11 +323,35 @@ describe('jobReducer', () => {
                     companyName: 'New name',
                     position: 'Lead',
                     description: 'Updated notes',
+                    link: 'https://example.com/job',
                     openDate: laterOpenDate,
                     submissionDate: laterSubmissionDate,
                 }),
                 createJob({ id: 2, companyName: 'Other', description: 'Keep me' }),
             ]);
+        });
+
+        it('updates and clears the optional link', () => {
+            const state: JobState = {
+                jobs: [
+                    createJob({
+                        id: 1,
+                        link: 'https://example.com/old',
+                    }),
+                ],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'UPDATE_ITEM',
+                payload: {
+                    id: 1,
+                    ...jobFields({
+                        link: '   ',
+                    }),
+                },
+            });
+
+            expect(nextState.jobs[0].link).toBe('');
         });
 
         it('updates only the description when other fields stay the same', () => {
@@ -444,6 +488,24 @@ describe('jobReducer', () => {
                     ...jobFields({
                         companyName: '   ',
                         description: 'Changed',
+                    }),
+                },
+            });
+
+            expect(nextState).toBe(state);
+        });
+
+        it('does not update when link is not a valid URL', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, link: 'https://example.com/old' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'UPDATE_ITEM',
+                payload: {
+                    id: 1,
+                    ...jobFields({
+                        link: 'not-a-url',
                     }),
                 },
             });

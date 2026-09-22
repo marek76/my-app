@@ -49,6 +49,14 @@
     white-space: pre-wrap;
 }
 
+.jobItemLink {
+    display: inline-block;
+    margin: 0.25rem 0 0;
+    font-size: 0.85em;
+    color: inherit;
+    word-break: break-all;
+}
+
 .jobItemMeta {
     margin: 0.25rem 0 0;
     font-size: 0.8em;
