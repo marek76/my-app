@@ -22,7 +22,8 @@ export type JobItem = JobItemFields & {
     state: JobItemStateKey;
 };
 
-export type JobFilter = 'all' | JobItemStateKey;
+export type JobFilter = JobItemStateKey[];
+
 
 export type JobState = {
     jobs: JobItem[];

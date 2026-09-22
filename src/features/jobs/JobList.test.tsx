@@ -9,7 +9,7 @@ const STORAGE_KEY = 'job_app_items';
 
 const renderJobList = () => render(
     <JobProvider>
-        <JobList filter="all" />
+        <JobList filter={[]} />
     </JobProvider>,
 );
 
