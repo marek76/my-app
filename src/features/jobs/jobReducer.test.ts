@@ -554,14 +554,15 @@ describe('jobReducer', () => {
             expect(nextState.jobs[0].submissionDate).toEqual(new Date('2026-09-09T00:00:00'));
         });
 
-        it('overwrites an existing submissionDate when changing to applied', () => {
+        it('keeps an existing submissionDate when changing to applied', () => {
+            const existingSubmissionDate = new Date('2026-08-01T00:00:00');
             vi.useFakeTimers();
             vi.setSystemTime(new Date(2026, 8, 9, 15, 30, 0));
 
             const state: JobState = {
                 jobs: [createJob({
                     id: 1,
-                    submissionDate: new Date('2026-08-01T00:00:00'),
+                    submissionDate: existingSubmissionDate,
                     state: 'new',
                 })],
             };
@@ -571,7 +572,8 @@ describe('jobReducer', () => {
                 payload: { id: 1, state: 'applied' },
             });
 
-            expect(nextState.jobs[0].submissionDate).toEqual(new Date('2026-09-09T00:00:00'));
+            expect(nextState.jobs[0].state).toBe('applied');
+            expect(nextState.jobs[0].submissionDate).toEqual(existingSubmissionDate);
         });
 
         it('changes applied to accepted without changing submissionDate', () => {

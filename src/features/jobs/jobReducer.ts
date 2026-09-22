@@ -95,7 +95,7 @@ export const jobReducer = (state: JobState, action: JobAction): JobState => {
                     return {
                         ...item,
                         state: action.payload.state,
-                        submissionDate: action.payload.state === 'applied'
+                        submissionDate: action.payload.state === 'applied' && item.submissionDate === null
                             ? todayDate()
                             : item.submissionDate,
                     };
