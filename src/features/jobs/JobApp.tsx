@@ -6,7 +6,7 @@ import { JobList } from './JobList';
 import './JobApp.css';
 
 export const JobApp = () => {
-    const [filter, setFilter] = useState<JobFilterValue>('all');
+    const [filters, setFilters] = useState<JobFilterValue>([]);
 
     return (
         <div className="jobApp">
@@ -14,8 +14,8 @@ export const JobApp = () => {
                 <h2>JOBS management</h2>
                 <JobInput />
             </div>
-            <JobFilter value={filter} onChange={setFilter} />
-            <JobList filter={filter} />
+            <JobFilter value={filters} onChange={setFilters} />
+            <JobList filter={filters} />
         </div>
     );
 };

@@ -49,23 +49,31 @@ const jobs: JobItem[] = [
 ];
 
 describe('filterJobs', () => {
-    it('returns all jobs for filter "all"', () => {
-        expect(filterJobs(jobs, 'all')).toEqual(jobs);
+    it('returns all jobs when no filters are selected', () => {
+        expect(filterJobs(jobs, [])).toEqual(jobs);
     });
 
     it('returns only new jobs for filter "new"', () => {
-        expect(filterJobs(jobs, 'new')).toEqual([jobs[0]]);
+        expect(filterJobs(jobs, ['new'])).toEqual([jobs[0]]);
     });
 
     it('returns only applied jobs for filter "applied"', () => {
-        expect(filterJobs(jobs, 'applied')).toEqual([jobs[1]]);
+        expect(filterJobs(jobs, ['applied'])).toEqual([jobs[1]]);
     });
 
     it('returns only accepted jobs for filter "accepted"', () => {
-        expect(filterJobs(jobs, 'accepted')).toEqual([jobs[2]]);
+        expect(filterJobs(jobs, ['accepted'])).toEqual([jobs[2]]);
     });
 
     it('returns only rejected jobs for filter "rejected"', () => {
-        expect(filterJobs(jobs, 'rejected')).toEqual([jobs[3]]);
+        expect(filterJobs(jobs, ['rejected'])).toEqual([jobs[3]]);
+    });
+
+    it('returns jobs matching any of the selected filters', () => {
+        expect(filterJobs(jobs, ['new', 'accepted'])).toEqual([jobs[0], jobs[2]]);
+    });
+
+    it('returns all selected statuses when every status is selected', () => {
+        expect(filterJobs(jobs, ['new', 'applied', 'accepted', 'rejected'])).toEqual(jobs);
     });
 });
