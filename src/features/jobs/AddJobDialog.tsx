@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import type { JobItemFields } from '../../types/types';
 import { parseDateInput, todayDateInputValue } from './jobDates';
+import { isValidJobLink } from './jobLink';
 import './AddJobDialog.css';
 
 type AddJobDialogProps = {
@@ -13,21 +14,29 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
     const [position, setPosition] = useState('');
     const [description, setDescription] = useState('');
     const [link, setLink] = useState('');
+    const [linkError, setLinkError] = useState<string | null>(null);
     const [openDate, setOpenDate] = useState(todayDateInputValue);
     const [submissionDate, setSubmissionDate] = useState('');
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const parsedOpenDate = parseDateInput(openDate);
+        const trimmedLink = link.trim();
         if (!companyName.trim() || !position.trim() || parsedOpenDate === null) {
             return;
         }
 
+        if (!isValidJobLink(trimmedLink)) {
+            setLinkError('Enter a valid http or https URL.');
+            return;
+        }
+
+        setLinkError(null);
         onAdd({
             companyName: companyName.trim(),
             position: position.trim(),
             description: description.trim(),
-            link: link.trim(),
+            link: trimmedLink,
             openDate: parsedOpenDate,
             submissionDate: parseDateInput(submissionDate),
         });
@@ -47,6 +56,9 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
 
     const handleLinkChange = (event: ChangeEvent<HTMLInputElement>) => {
         setLink(event.target.value);
+        if (linkError !== null) {
+            setLinkError(null);
+        }
     };
 
     const handleOpenDateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +79,7 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                 onClick={(event) => event.stopPropagation()}
             >
                 <h3 id="add-job-title">Add Job</h3>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <label htmlFor="add-job-company">Company</label>
                     <input
                         id="add-job-company"
@@ -98,11 +110,18 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                     <label htmlFor="add-job-link">Link</label>
                     <input
                         id="add-job-link"
-                        type="text"
+                        type="url"
                         value={link}
                         onChange={handleLinkChange}
                         placeholder="https://"
+                        aria-invalid={linkError !== null}
+                        aria-describedby={linkError !== null ? 'add-job-link-error' : undefined}
                     />
+                    {linkError !== null ? (
+                        <p id="add-job-link-error" className="fieldError" role="alert">
+                            {linkError}
+                        </p>
+                    ) : null}
 
                     <label htmlFor="add-job-open-date">Open date</label>
                     <input

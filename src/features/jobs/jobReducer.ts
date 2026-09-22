@@ -1,5 +1,6 @@
 import type { JobAction, JobItem, JobItemFields, JobState } from '../../types/types';
 import { cloneDate, todayDate } from './jobDates';
+import { isValidJobLink } from './jobLink';
 import { canSetJobState } from './jobStateTransitions';
 
 const nextJobId = (jobs: JobItem[]): number => {
@@ -13,12 +14,13 @@ const nextJobId = (jobs: JobItem[]): number => {
 const normalizeJobFields = (fields: JobItemFields): JobItemFields | null => {
     const companyName = fields.companyName.trim();
     const position = fields.position.trim();
+    const link = fields.link.trim();
     const openDate = cloneDate(fields.openDate);
     const submissionDate = fields.submissionDate === null
         ? null
         : cloneDate(fields.submissionDate);
 
-    if (!companyName || !position || openDate === null) {
+    if (!companyName || !position || openDate === null || !isValidJobLink(link)) {
         return null;
     }
 
@@ -26,7 +28,7 @@ const normalizeJobFields = (fields: JobItemFields): JobItemFields | null => {
         companyName,
         position,
         description: fields.description.trim(),
-        link: fields.link.trim(),
+        link,
         openDate,
         submissionDate,
     };

@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import type { JobItem, JobItemFields } from '../../types/types';
 import { parseDateInput, toDateInputValue } from './jobDates';
+import { isValidJobLink } from './jobLink';
 import './EditJobDialog.css';
 
 type EditJobDialogProps = {
@@ -14,6 +15,7 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
     const [position, setPosition] = useState(job.position);
     const [description, setDescription] = useState(job.description);
     const [link, setLink] = useState(job.link);
+    const [linkError, setLinkError] = useState<string | null>(null);
     const [openDate, setOpenDate] = useState(toDateInputValue(job.openDate));
     const [submissionDate, setSubmissionDate] = useState(
         job.submissionDate === null ? '' : toDateInputValue(job.submissionDate),
@@ -22,15 +24,22 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const parsedOpenDate = parseDateInput(openDate);
+        const trimmedLink = link.trim();
         if (!companyName.trim() || !position.trim() || parsedOpenDate === null) {
             return;
         }
 
+        if (!isValidJobLink(trimmedLink)) {
+            setLinkError('Enter a valid http or https URL.');
+            return;
+        }
+
+        setLinkError(null);
         onUpdate({
             companyName: companyName.trim(),
             position: position.trim(),
             description: description.trim(),
-            link: link.trim(),
+            link: trimmedLink,
             openDate: parsedOpenDate,
             submissionDate: parseDateInput(submissionDate),
         });
@@ -50,6 +59,9 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
 
     const handleLinkChange = (event: ChangeEvent<HTMLInputElement>) => {
         setLink(event.target.value);
+        if (linkError !== null) {
+            setLinkError(null);
+        }
     };
 
     const handleOpenDateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +82,7 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
                 onClick={(event) => event.stopPropagation()}
             >
                 <h3 id="edit-job-title">Edit job</h3>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <label htmlFor="edit-job-company">Company</label>
                     <input
                         id="edit-job-company"
@@ -101,11 +113,18 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
                     <label htmlFor="edit-job-link">Link</label>
                     <input
                         id="edit-job-link"
-                        type="text"
+                        type="url"
                         value={link}
                         onChange={handleLinkChange}
                         placeholder="https://"
+                        aria-invalid={linkError !== null}
+                        aria-describedby={linkError !== null ? 'edit-job-link-error' : undefined}
                     />
+                    {linkError !== null ? (
+                        <p id="edit-job-link-error" className="fieldError" role="alert">
+                            {linkError}
+                        </p>
+                    ) : null}
 
                     <label htmlFor="edit-job-open-date">Open date</label>
                     <input

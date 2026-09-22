@@ -109,4 +109,20 @@ describe('EditJobDialog', () => {
             submissionDate: null,
         });
     });
+
+    it('does not call onUpdate when link is not a valid URL', async () => {
+        const user = userEvent.setup();
+        const onUpdate = vi.fn();
+
+        render(<EditJobDialog job={job} onCancel={vi.fn()} onUpdate={onUpdate} />);
+
+        await user.clear(screen.getByLabelText('Link'));
+        await user.type(screen.getByLabelText('Link'), 'example.com');
+        await user.click(screen.getByRole('button', { name: 'Update' }));
+
+        expect(onUpdate).not.toHaveBeenCalled();
+        expect(screen.getByRole('alert')).toHaveTextContent(
+            'Enter a valid http or https URL.',
+        );
+    });
 });

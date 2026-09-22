@@ -125,4 +125,19 @@ describe('AddJobDialog', () => {
             submissionDate: parseDateInput('2026-09-09'),
         });
     });
+
+    it('does not call onAdd when link is not a valid URL', async () => {
+        const onAdd = vi.fn();
+
+        render(<AddJobDialog onCancel={vi.fn()} onAdd={onAdd} />);
+
+        const user = await fillRequiredFields();
+        await user.type(screen.getByLabelText('Link'), 'not-a-url');
+        await user.click(screen.getByRole('button', { name: 'Add' }));
+
+        expect(onAdd).not.toHaveBeenCalled();
+        expect(screen.getByRole('alert')).toHaveTextContent(
+            'Enter a valid http or https URL.',
+        );
+    });
 });

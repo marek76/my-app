@@ -1,6 +1,7 @@
 import { useEffect, useReducer, type ReactNode } from 'react';
 import { jobReducer } from '../features/jobs/jobReducer';
 import { parseStoredDate } from '../features/jobs/jobDates';
+import { isValidJobLink } from '../features/jobs/jobLink';
 import type { JobItem, JobItemStateKey, JobState } from '../types/types';
 import { JobContext } from './jobContext';
 
@@ -52,7 +53,9 @@ const normalizeJobs = (value: unknown): JobItem[] => {
             companyName,
             position,
             description: typeof candidate.description === 'string' ? candidate.description : '',
-            link: typeof candidate.link === 'string' ? candidate.link : '',
+            link: typeof candidate.link === 'string' && isValidJobLink(candidate.link)
+                ? candidate.link.trim()
+                : '',
             openDate,
             submissionDate: parseStoredDate(candidate.submissionDate),
             state,

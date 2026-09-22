@@ -201,6 +201,19 @@ describe('jobReducer', () => {
             expect(nextState).toBe(state);
         });
 
+        it('does not add a job when link is not a valid URL', () => {
+            const state: JobState = { jobs: [] };
+
+            const nextState = jobReducer(state, {
+                type: 'NEW_ITEM',
+                payload: jobFields({
+                    link: 'example.com',
+                }),
+            });
+
+            expect(nextState).toBe(state);
+        });
+
         it('adds a job when submissionDate is missing', () => {
             const state: JobState = { jobs: [] };
 
@@ -475,6 +488,24 @@ describe('jobReducer', () => {
                     ...jobFields({
                         companyName: '   ',
                         description: 'Changed',
+                    }),
+                },
+            });
+
+            expect(nextState).toBe(state);
+        });
+
+        it('does not update when link is not a valid URL', () => {
+            const state: JobState = {
+                jobs: [createJob({ id: 1, link: 'https://example.com/old' })],
+            };
+
+            const nextState = jobReducer(state, {
+                type: 'UPDATE_ITEM',
+                payload: {
+                    id: 1,
+                    ...jobFields({
+                        link: 'not-a-url',
                     }),
                 },
             });
