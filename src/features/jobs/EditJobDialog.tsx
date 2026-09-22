@@ -13,6 +13,7 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
     const [companyName, setCompanyName] = useState(job.companyName);
     const [position, setPosition] = useState(job.position);
     const [description, setDescription] = useState(job.description);
+    const [link, setLink] = useState(job.link);
     const [openDate, setOpenDate] = useState(toDateInputValue(job.openDate));
     const [submissionDate, setSubmissionDate] = useState(
         job.submissionDate === null ? '' : toDateInputValue(job.submissionDate),
@@ -29,6 +30,7 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
             companyName: companyName.trim(),
             position: position.trim(),
             description: description.trim(),
+            link: link.trim(),
             openDate: parsedOpenDate,
             submissionDate: parseDateInput(submissionDate),
         });
@@ -44,6 +46,10 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
 
     const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
+    };
+
+    const handleLinkChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setLink(event.target.value);
     };
 
     const handleOpenDateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +96,15 @@ export const EditJobDialog = ({ job, onCancel, onUpdate }: EditJobDialogProps) =
                         value={description}
                         onChange={handleDescriptionChange}
                         rows={4}
+                    />
+
+                    <label htmlFor="edit-job-link">Link</label>
+                    <input
+                        id="edit-job-link"
+                        type="text"
+                        value={link}
+                        onChange={handleLinkChange}
+                        placeholder="https://"
                     />
 
                     <label htmlFor="edit-job-open-date">Open date</label>

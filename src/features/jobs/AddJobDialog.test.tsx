@@ -26,6 +26,7 @@ describe('AddJobDialog', () => {
         expect(screen.getByLabelText('Company')).toBeInTheDocument();
         expect(screen.getByLabelText('Position')).toBeInTheDocument();
         expect(screen.getByLabelText('Description')).toBeInTheDocument();
+        expect(screen.getByLabelText('Link')).toBeInTheDocument();
         expect(screen.getByLabelText('Open date')).toBeInTheDocument();
         expect(screen.getByLabelText('Submission date')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -97,6 +98,7 @@ describe('AddJobDialog', () => {
             companyName: 'Acme',
             position: 'Frontend developer',
             description: '',
+            link: '',
             openDate: parseDateInput('2026-09-01'),
             submissionDate: null,
         });
@@ -109,6 +111,7 @@ describe('AddJobDialog', () => {
 
         const user = await fillRequiredFields();
         await user.type(screen.getByLabelText('Description'), '  Remote role  ');
+        await user.type(screen.getByLabelText('Link'), '  https://example.com/jobs/1  ');
         fireEvent.change(screen.getByLabelText('Submission date'), { target: { value: '2026-09-09' } });
         await user.click(screen.getByRole('button', { name: 'Add' }));
 
@@ -117,6 +120,7 @@ describe('AddJobDialog', () => {
             companyName: 'Acme',
             position: 'Frontend developer',
             description: 'Remote role',
+            link: 'https://example.com/jobs/1',
             openDate: parseDateInput('2026-09-01'),
             submissionDate: parseDateInput('2026-09-09'),
         });

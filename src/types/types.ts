@@ -12,6 +12,7 @@ export type JobItemFields = {
     companyName: string;
     position: string;
     description: string;
+    link: string;
     openDate: Date;
     submissionDate: Date | null;
 };

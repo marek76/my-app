@@ -12,6 +12,7 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
     const [companyName, setCompanyName] = useState('');
     const [position, setPosition] = useState('');
     const [description, setDescription] = useState('');
+    const [link, setLink] = useState('');
     const [openDate, setOpenDate] = useState(todayDateInputValue);
     const [submissionDate, setSubmissionDate] = useState('');
 
@@ -26,6 +27,7 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
             companyName: companyName.trim(),
             position: position.trim(),
             description: description.trim(),
+            link: link.trim(),
             openDate: parsedOpenDate,
             submissionDate: parseDateInput(submissionDate),
         });
@@ -41,6 +43,10 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
 
     const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
+    };
+
+    const handleLinkChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setLink(event.target.value);
     };
 
     const handleOpenDateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +93,15 @@ export const AddJobDialog = ({ onCancel, onAdd }: AddJobDialogProps) => {
                         value={description}
                         onChange={handleDescriptionChange}
                         rows={4}
+                    />
+
+                    <label htmlFor="add-job-link">Link</label>
+                    <input
+                        id="add-job-link"
+                        type="text"
+                        value={link}
+                        onChange={handleLinkChange}
+                        placeholder="https://"
                     />
 
                     <label htmlFor="add-job-open-date">Open date</label>

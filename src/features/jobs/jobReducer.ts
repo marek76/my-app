@@ -26,6 +26,7 @@ const normalizeJobFields = (fields: JobItemFields): JobItemFields | null => {
         companyName,
         position,
         description: fields.description.trim(),
+        link: fields.link.trim(),
         openDate,
         submissionDate,
     };

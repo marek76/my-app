@@ -164,4 +164,45 @@ describe('JobList', () => {
         expect(items).toHaveLength(2);
         expect(getComputedStyle(items[1]).borderTopWidth).not.toBe('0px');
     });
+
+    it('renders a clickable job link that opens in a new window', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                link: 'https://example.com/jobs/acme',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+        ]));
+
+        renderJobList();
+
+        const link = screen.getByRole('link', { name: 'https://example.com/jobs/acme' });
+        expect(link).toHaveAttribute('href', 'https://example.com/jobs/acme');
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('hides the job link when it is empty', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                link: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+        ]));
+
+        renderJobList();
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    });
 });

@@ -25,6 +25,7 @@ const normalizeJobs = (value: unknown): JobItem[] => {
             name?: unknown;
             position?: unknown;
             description?: unknown;
+            link?: unknown;
             openDate?: unknown;
             submissionDate?: unknown;
             state?: unknown;
@@ -51,6 +52,7 @@ const normalizeJobs = (value: unknown): JobItem[] => {
             companyName,
             position,
             description: typeof candidate.description === 'string' ? candidate.description : '',
+            link: typeof candidate.link === 'string' ? candidate.link : '',
             openDate,
             submissionDate: parseStoredDate(candidate.submissionDate),
             state,
