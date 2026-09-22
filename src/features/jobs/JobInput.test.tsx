@@ -89,7 +89,7 @@ describe('JobInput add action', () => {
             position: 'Backend developer',
             description: 'Remote role',
             link: '',
-            state: 'new',
+            state: 'applied',
         });
     });
 
