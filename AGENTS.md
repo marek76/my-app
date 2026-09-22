@@ -1,73 +1,48 @@
 # Multi-Agent Workflow Configuration (`AGENTS.md`)
 
-Tento dokument definuje architekturu, role a pravidla pro autonomní AI agenty v tomto projektu.
+This document defines the architecture, roles, and rules for autonomous AI agents in this project.
 
 ---
 
-## Fáze vývoje nové funkce (Feature Workflow)
+## Feature Development Workflow
 
-Při vývoji nové funkce postupují agenti v tomto sekvenčním pořadí:
-1. **Agent 0 (Prep & Branch):** Otestuje výchozí kód a vytvoří novou feature větev.
-2. **Agent 4 (Developer):** Napíše novou funkčnost a vytvoří k ní příslušné testy.
-3. **Agent 1 (Tester):** Otestuje celou aplikaci (linter, typy, testy).
-4. **Agent 2 (Fixer):** Pokud se objeví chyby, opraví je a předá kód zpět Agentovi 1.
-5. **Agent 3 (Git & PR):** Jakmile vše projde, vytvoří commit, pushne větev a připraví PR.
+When developing a new feature, agents proceed in this sequential order:
+
+1. **Agent 0 (Prep & Branch):** Tests the baseline code and creates a new feature branch.
+2. **Agent 4 (Developer):** Writes the new functionality and its corresponding tests.
+3. **Agent 1 (Tester):** Tests the whole application (linter, types, tests).
+4. **Agent 2 (Fixer):** If errors appear, fixes them and hands the code back to Agent 1.
+5. **Agent 3 (Git & PR):** Once everything passes, creates a commit, pushes the branch, and prepares a PR.
 
 ---
 
-## Definice agentů
+## Agent Definitions
+
+Each agent below is implemented as a Cursor Agent Skill in `.cursor/skills/`. This file is the always-loaded index; the individual `SKILL.md` files contain the full instructions and are loaded on demand.
 
 ### 0. Agent 0: Prep & Branch (`@Agent-0-Prep`)
-- **Role:** Příprava prostředí před započetím prací na nové feature.
-- **Instrukce:**
-  1. Spusť linter a testy na stávajícím kódu, aby ses ujistil, že výchozí větev je stabilní.
-  2. Pokud výchozí stav obsahuje chyby, upozorni uživatele před vytvořením větwě.
-  3. Pokud je základ zelený, vytvoř a přepni se do nové větve: `git checkout -b feature/<nazev-feature>`.
-  4. Předej řízení na **Agenta 4 (Developer)**.
-
----
+- **Role:** Prepare the environment before starting work on a new feature.
+- See `.cursor/skills/agent-0-prep-branch/SKILL.md`.
 
 ### 4. Agent 4: Developer (`@Agent-4-Developer`)
-- **Role:** Návrh a implementace nové funkčnosti včetně automatických testů.
-- **Instrukce:**
-  1. Analýza požadavku na novou feature.
-  2. **Implementace kódu:** Napiš čistý, typově bezpečný kód dle konvencí projektu.
-  3. **Implementace testů:** Pro novou feature **vždy vytvoř odpovídající testy** (unit/integration testy).
-  4. Po dokončení kódu a testů předej řízení na **Agenta 1 (Tester)** pro finální verifikaci celého projektu.
-
----
+- **Role:** Design and implement new functionality, including automated tests.
+- See `.cursor/skills/agent-4-developer/SKILL.md`.
 
 ### 1. Agent 1: Tester (`@Agent-1-Tester`)
-- **Role:** Statická analýza kódu, kontrola linteru a spouštění automatických testů.
-- **Instrukce:**
-  1. Spusť linter, typovou kontrolu (`tsc` / `npm run build`) a kompletní sadu testů.
-- **Rozhodovací logika:**
-  - **Chyba detekována:** Předej kompletní chybový výstup na **Agenta 2 (Fixer)**.
-  - **Bez chyb:** Předej řízení na **Agenta 3 (Git & PR)**.
-
----
+- **Role:** Static analysis, linter checks, and running the automated test suite.
+- See `.cursor/skills/agent-1-tester/SKILL.md`.
 
 ### 2. Agent 2: Fixer (`@Agent-2-Fixer`)
-- **Role:** Diagnostika a oprava selhaných testů nebo typových chyb po implementaci.
-- **Instrukce:**
-  1. Přijmi výpis chyb od Agenta 1.
-  2. Oprav chyby v kódu nebo v testech s minimálními nutnými zásahy.
-  3. Po dokončení úprav předej řízení zpět na **Agenta 1 (Tester)** ke křížové kontrole.
-
----
+- **Role:** Diagnose and fix failing tests or type errors after implementation.
+- See `.cursor/skills/agent-2-fixer/SKILL.md`.
 
 ### 3. Agent 3: Git & PR (`@Agent-3-GitPR`)
-- **Role:** Verzování, push a vytvoření Pull Requestu.
-- **Instrukce:**
-  1. Zkontroluj `git status`.
-  2. Přidej změněné soubory: `git add .`
-  3. Vytvoř commit s konvencí **Conventional Commits** (např. `feat(jobs): add priority field`).
-  4. Pushni větev na vzdálený repozitář: `git push -u origin <nazev-vetve>`
-  5. Vytvoř Pull Request pomocí GitHub CLI: `"C:\Program Files\GitHub CLI\gh.exe" pr create --title "feat: <nazev>" --body "<popis-změn>"` (nebo připrav odkaz a popis pro ruční vytvoření).
+- **Role:** Versioning, pushing, and creating the Pull Request.
+- See `.cursor/skills/agent-3-git-pr/SKILL.md`.
 
 ---
 
-## Základní pravidla pro agenty
-- Neprovádějte destruktivní příkazy bez potvrzení uživatele (např. `git reset --hard`, `rm -rf`).
-- Výstupy změn udržujte čisté a přehledné.
-- Vždy vyžadujte formátovanou strukturu zpráv s jasným označením, který agent aktuálně pracuje.
+## Baseline Rules for All Agents
+- Never run destructive commands without user confirmation (e.g. `git reset --hard`, `rm -rf`).
+- Keep change output clean and readable.
+- Always use a formatted message structure that clearly states which agent is currently working.
