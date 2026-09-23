@@ -1,15 +1,55 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JobProvider } from '../../context/JobProvider';
+import type { ColumnVisibility } from '../../types/types';
 import { JobList } from './JobList';
 import { todayDateInputValue } from './jobDates';
 
 const STORAGE_KEY = 'job_app_items';
 
-const renderJobList = () => render(
+const ALL_VISIBLE: ColumnVisibility = {
+    new: true,
+    applied: true,
+    accepted: true,
+    rejected: true,
+};
+
+const createDataTransfer = () => {
+    const store: Record<string, string> = {};
+
+    return {
+        effectAllowed: 'all' as string,
+        dropEffect: 'move' as string,
+        setData: (format: string, value: string) => {
+            store[format] = value;
+        },
+        getData: (format: string) => store[format] ?? '',
+    };
+};
+
+const dragJobToColumn = (jobName: string, columnName: string) => {
+    const dataTransfer = createDataTransfer();
+    const jobItem = screen.getByText(jobName).closest('.jobItem');
+    const column = screen.getByRole('region', { name: columnName });
+
+    expect(jobItem).not.toBeNull();
+
+    fireEvent.dragStart(jobItem!, { dataTransfer });
+    fireEvent.dragOver(column, { dataTransfer });
+    fireEvent.drop(column, { dataTransfer });
+    fireEvent.dragEnd(jobItem!, { dataTransfer });
+};
+
+const renderJobList = (
+    columnVisibility: ColumnVisibility = ALL_VISIBLE,
+    onColumnVisibilityChange = vi.fn(),
+) => render(
     <JobProvider>
-        <JobList filter={[]} />
+        <JobList
+            columnVisibility={columnVisibility}
+            onColumnVisibilityChange={onColumnVisibilityChange}
+        />
     </JobProvider>,
 );
 
@@ -105,7 +145,38 @@ describe('JobList', () => {
         expect(screen.getByRole('region', { name: 'Rejected' })).toBeInTheDocument();
     });
 
-    it('hides filtered-out status columns', () => {
+    it('renders checked visibility checkboxes by default', () => {
+        renderJobList();
+
+        expect(screen.getByRole('checkbox', { name: 'Show New column' })).toBeChecked();
+        expect(screen.getByRole('checkbox', { name: 'Show Applied column' })).toBeChecked();
+        expect(screen.getByRole('checkbox', { name: 'Show Accepted column' })).toBeChecked();
+        expect(screen.getByRole('checkbox', { name: 'Show Rejected column' })).toBeChecked();
+    });
+
+    it('hides column jobs when its visibility checkbox is unchecked', async () => {
+        const user = userEvent.setup();
+        const onColumnVisibilityChange = vi.fn();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+        ]));
+
+        renderJobList(ALL_VISIBLE, onColumnVisibilityChange);
+
+        await user.click(screen.getByRole('checkbox', { name: 'Show New column' }));
+
+        expect(onColumnVisibilityChange).toHaveBeenCalledWith('new', false);
+    });
+
+    it('keeps filtered-out columns visible without their jobs', () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify([
             {
                 id: 1,
@@ -125,28 +196,23 @@ describe('JobList', () => {
                 submissionDate: '2026-09-03T00:00:00',
                 state: 'applied',
             },
-            {
-                id: 3,
-                companyName: 'Initech',
-                position: 'Full stack developer',
-                description: '',
-                openDate: '2026-09-04T00:00:00',
-                submissionDate: '2026-09-05T00:00:00',
-                state: 'accepted',
-            },
         ]));
 
-        render(
-            <JobProvider>
-                <JobList filter={['new']} />
-            </JobProvider>,
-        );
+        renderJobList({
+            new: true,
+            applied: false,
+            accepted: true,
+            rejected: false,
+        });
 
         expect(screen.getByRole('region', { name: 'New' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Applied' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Accepted' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Rejected' })).toBeInTheDocument();
         expect(within(screen.getByRole('region', { name: 'New' })).getByText('Acme')).toBeInTheDocument();
-        expect(screen.queryByRole('region', { name: 'Applied' })).not.toBeInTheDocument();
-        expect(screen.queryByRole('region', { name: 'Accepted' })).not.toBeInTheDocument();
-        expect(screen.queryByRole('region', { name: 'Rejected' })).not.toBeInTheDocument();
+        expect(within(screen.getByRole('region', { name: 'Applied' })).queryByText('Globex')).not.toBeInTheDocument();
+        expect(screen.getByRole('checkbox', { name: 'Show Applied column' })).not.toBeChecked();
+        expect(screen.getByRole('checkbox', { name: 'Show Rejected column' })).not.toBeChecked();
     });
 
     it('hides submission date when it is missing', () => {
@@ -332,5 +398,73 @@ describe('JobList', () => {
         renderJobList();
 
         expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    });
+
+    it('moves a job to another column by drag and drop when the transition is allowed', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+        ]));
+
+        renderJobList();
+
+        dragJobToColumn('Acme', 'Applied');
+
+        expect(within(screen.getByRole('region', { name: 'Applied' })).getByText('Acme')).toBeInTheDocument();
+        expect(within(screen.getByRole('region', { name: 'New' })).queryByText('Acme')).not.toBeInTheDocument();
+        expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')[0]).toMatchObject({
+            state: 'applied',
+        });
+        expect(screen.getByText(new RegExp(`Submit ${todayDateInputValue()}`))).toBeInTheDocument();
+    });
+
+    it('does not move a job when the state transition is not allowed', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+        ]));
+
+        renderJobList();
+
+        dragJobToColumn('Acme', 'Accepted');
+
+        expect(within(screen.getByRole('region', { name: 'New' })).getByText('Acme')).toBeInTheDocument();
+        expect(within(screen.getByRole('region', { name: 'Accepted' })).queryByText('Acme')).not.toBeInTheDocument();
+        expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')[0]).toMatchObject({
+            state: 'new',
+        });
+    });
+
+    it('does not allow dragging a rejected job', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: '2026-09-09T00:00:00',
+                state: 'rejected',
+            },
+        ]));
+
+        renderJobList();
+
+        const jobItem = screen.getByText('Acme').closest('.jobItem');
+        expect(jobItem).toHaveAttribute('draggable', 'false');
     });
 });

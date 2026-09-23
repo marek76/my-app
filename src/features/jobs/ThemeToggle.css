@@ -1,0 +1,11 @@
+.themeToggle {
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+}
+
+.themeToggle:hover {
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+}

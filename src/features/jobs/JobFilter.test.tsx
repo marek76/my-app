@@ -3,40 +3,23 @@ import { describe, expect, it, vi } from 'vitest';
 import { JobFilter } from './JobFilter';
 
 describe('JobFilter', () => {
-    it('marks All as active when no status filters are selected', () => {
-        render(<JobFilter value={[]} onChange={vi.fn()} />);
+    it('renders a Show all button', () => {
+        render(<JobFilter onShowAll={vi.fn()} />);
 
-        expect(screen.getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true');
-        expect(screen.getByRole('button', { name: 'New' })).toHaveAttribute('aria-pressed', 'false');
+        expect(screen.getByRole('button', { name: 'Show all' })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'New' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Applied' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Accepted' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Rejected' })).not.toBeInTheDocument();
     });
 
-    it('resets filters to empty when All is clicked', () => {
-        const onChange = vi.fn();
+    it('calls onShowAll when Show all is clicked', () => {
+        const onShowAll = vi.fn();
 
-        render(<JobFilter value={['new', 'applied']} onChange={onChange} />);
+        render(<JobFilter onShowAll={onShowAll} />);
 
-        fireEvent.click(screen.getByRole('button', { name: 'All' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Show all' }));
 
-        expect(onChange).toHaveBeenCalledWith([]);
-    });
-
-    it('adds a status filter when it is clicked', () => {
-        const onChange = vi.fn();
-
-        render(<JobFilter value={['new']} onChange={onChange} />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Applied' }));
-
-        expect(onChange).toHaveBeenCalledWith(['new', 'applied']);
-    });
-
-    it('removes a status filter when an active status is clicked', () => {
-        const onChange = vi.fn();
-
-        render(<JobFilter value={['new', 'applied']} onChange={onChange} />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'New' }));
-
-        expect(onChange).toHaveBeenCalledWith(['applied']);
+        expect(onShowAll).toHaveBeenCalledTimes(1);
     });
 });

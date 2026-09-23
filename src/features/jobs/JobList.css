@@ -1,16 +1,60 @@
 .jobBoard {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
-    align-items: start;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .jobColumn {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0.35rem;
+    padding: 0.35rem;
+    box-sizing: border-box;
+    transition: background-color 0.15s ease, outline-color 0.15s ease;
+}
+
+.jobColumn.isHidden .jobColumnTitle {
+    opacity: 0.55;
+}
+
+.jobColumn.isDroppable {
+    outline: 1px dashed color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.jobColumn.isDropTarget {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    outline: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.jobColumn.isDropBlocked {
+    opacity: 0.72;
+}
+
+.jobColumnHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+    flex-shrink: 0;
+}
+
+.jobColumnVisibility {
+    flex-shrink: 0;
+    margin: 0;
+    cursor: pointer;
 }
 
 .jobColumnTitle {
-    margin: 0 0 0.5rem;
+    margin: 0;
     font-size: 1rem;
     font-weight: 600;
 }
@@ -20,7 +64,7 @@
 }
 
 .jobColumn.applied .jobColumnTitle {
-    color: yellow;
+    color: var(--job-applied, #a16207);
 }
 
 .jobColumn.accepted .jobColumnTitle {
@@ -34,7 +78,42 @@
 .jobList {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0.15rem 0 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.jobList::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+}
+
+.jobList::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 999px;
+    margin: 0.25rem 0;
+}
+
+.jobList::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    min-height: 2rem;
+}
+
+.jobList::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.jobList::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 .jobItem {
@@ -45,10 +124,26 @@
     color: #000;
 }
 
+.jobItem.isDraggable {
+    cursor: grab;
+}
+
+.jobItem.isDraggable:active {
+    cursor: grabbing;
+}
+
 @media (prefers-color-scheme: dark) {
-    .jobItem {
+    :root:not([data-theme="light"]) .jobItem {
         color: #9ca3af;
     }
+}
+
+:root[data-theme="dark"] .jobItem {
+    color: #9ca3af;
+}
+
+:root[data-theme="light"] .jobItem {
+    color: #000;
 }
 
 .jobItem + .jobItem {
@@ -72,7 +167,7 @@
 
 .jobItem.applied .jobItemCompany,
 .jobItem.applied .jobItemPosition {
-    color: yellow;
+    color: var(--job-applied, #a16207);
 }
 
 .jobItem.accepted .jobItemCompany,

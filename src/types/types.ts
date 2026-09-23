@@ -22,8 +22,7 @@ export type JobItem = JobItemFields & {
     state: JobItemStateKey;
 };
 
-export type JobFilter = JobItemStateKey[];
-
+export type ColumnVisibility = Record<JobItemStateKey, boolean>;
 
 export type JobState = {
     jobs: JobItem[];
