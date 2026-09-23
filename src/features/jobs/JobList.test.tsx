@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { JobProvider } from '../../context/JobProvider';
@@ -20,6 +20,133 @@ describe('JobList', () => {
 
     afterEach(() => {
         localStorage.clear();
+    });
+
+    it('displays jobs in four status columns', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+            {
+                id: 2,
+                companyName: 'Globex',
+                position: 'Backend developer',
+                description: '',
+                openDate: '2026-09-02T00:00:00',
+                submissionDate: '2026-09-03T00:00:00',
+                state: 'applied',
+            },
+            {
+                id: 3,
+                companyName: 'Initech',
+                position: 'Full stack developer',
+                description: '',
+                openDate: '2026-09-04T00:00:00',
+                submissionDate: '2026-09-05T00:00:00',
+                state: 'accepted',
+            },
+            {
+                id: 4,
+                companyName: 'Umbrella',
+                position: 'QA engineer',
+                description: '',
+                openDate: '2026-09-06T00:00:00',
+                submissionDate: '2026-09-07T00:00:00',
+                state: 'rejected',
+            },
+        ]));
+
+        renderJobList();
+
+        const newColumn = screen.getByRole('region', { name: 'New' });
+        const appliedColumn = screen.getByRole('region', { name: 'Applied' });
+        const acceptedColumn = screen.getByRole('region', { name: 'Accepted' });
+        const rejectedColumn = screen.getByRole('region', { name: 'Rejected' });
+
+        expect(within(newColumn).getByText('Acme')).toBeInTheDocument();
+        expect(within(appliedColumn).getByText('Globex')).toBeInTheDocument();
+        expect(within(acceptedColumn).getByText('Initech')).toBeInTheDocument();
+        expect(within(rejectedColumn).getByText('Umbrella')).toBeInTheDocument();
+    });
+
+    it('keeps empty status columns visible', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+            {
+                id: 2,
+                companyName: 'Globex',
+                position: 'Backend developer',
+                description: '',
+                openDate: '2026-09-02T00:00:00',
+                submissionDate: '2026-09-03T00:00:00',
+                state: 'applied',
+            },
+        ]));
+
+        renderJobList();
+
+        expect(screen.getByRole('region', { name: 'New' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Applied' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Accepted' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Rejected' })).toBeInTheDocument();
+    });
+
+    it('hides filtered-out status columns', () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([
+            {
+                id: 1,
+                companyName: 'Acme',
+                position: 'Frontend developer',
+                description: '',
+                openDate: '2026-09-01T00:00:00',
+                submissionDate: null,
+                state: 'new',
+            },
+            {
+                id: 2,
+                companyName: 'Globex',
+                position: 'Backend developer',
+                description: '',
+                openDate: '2026-09-02T00:00:00',
+                submissionDate: '2026-09-03T00:00:00',
+                state: 'applied',
+            },
+            {
+                id: 3,
+                companyName: 'Initech',
+                position: 'Full stack developer',
+                description: '',
+                openDate: '2026-09-04T00:00:00',
+                submissionDate: '2026-09-05T00:00:00',
+                state: 'accepted',
+            },
+        ]));
+
+        render(
+            <JobProvider>
+                <JobList filter={['new']} />
+            </JobProvider>,
+        );
+
+        expect(screen.getByRole('region', { name: 'New' })).toBeInTheDocument();
+        expect(within(screen.getByRole('region', { name: 'New' })).getByText('Acme')).toBeInTheDocument();
+        expect(screen.queryByRole('region', { name: 'Applied' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('region', { name: 'Accepted' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('region', { name: 'Rejected' })).not.toBeInTheDocument();
     });
 
     it('hides submission date when it is missing', () => {
@@ -85,6 +212,7 @@ describe('JobList', () => {
         expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')[0]).toMatchObject({
             state: 'applied',
         });
+        expect(within(screen.getByRole('region', { name: 'Applied' })).getByText('Acme')).toBeInTheDocument();
     });
 
     it('lets an applied job change to accepted or rejected', async () => {
@@ -132,7 +260,7 @@ describe('JobList', () => {
         await user.click(screen.getByRole('button', { name: 'Set status of Acme' }));
         await user.click(screen.getByRole('menuitem', { name: 'Rejected' }));
 
-        expect(screen.getByText('Rejected')).toBeInTheDocument();
+        expect(within(screen.getByRole('region', { name: 'Rejected' })).getByText('Acme')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Set status of Acme' })).not.toBeInTheDocument();
     });
 

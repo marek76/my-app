@@ -9,7 +9,7 @@ description: Step 3 (and re-verification step) of the feature workflow. Use afte
 Static code analysis, linter checks, and running the automated test suite.
 
 ## Instructions
-1. Run the linter, type checker (`tsc` / `npm run build`), and the full test suite.
+1. Run the linter, type checker (`tsc` / `pnpm run build`), and the full test suite.
 
 ## Decision logic
 - **Errors found:** hand off the complete error output to **Agent 2 (Fixer)**.
