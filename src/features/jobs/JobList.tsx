@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../../context/useStore';
-import type { JobFilter, JobItem, JobItemFields } from '../../types/types';
+import type { JobFilter, JobItem, JobItemFields, JobItemStateKey } from '../../types/types';
+import { JobItemState } from '../../types/types';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { EditJobDialog } from './EditJobDialog';
 import { filterJobs } from './filterJobs';
@@ -11,6 +12,8 @@ import './JobList.css';
 type JobListProps = {
     filter: JobFilter;
 };
+
+const JOB_COLUMNS = Object.keys(JobItemState) as JobItemStateKey[];
 
 const EditIcon = () => (
     <svg
@@ -56,6 +59,60 @@ const formatJobDates = (job: JobItem): string => {
     return parts.join(' · ');
 };
 
+type JobListItemProps = {
+    job: JobItem;
+    onEdit: (id: number) => void;
+    onDelete: (id: number) => void;
+    onSetState: (id: number, state: JobItemStateKey) => void;
+};
+
+const JobListItem = ({ job, onEdit, onDelete, onSetState }: JobListItemProps) => (
+    <li className={`jobItem ${job.state}`}>
+        <div className="jobItemContent">
+            <p className="jobItemCompany">{job.companyName}</p>
+            <p className="jobItemPosition">{job.position}</p>
+            {job.description ? (
+                <p className="jobItemDescription">{job.description}</p>
+            ) : null}
+            {job.link ? (
+                <a
+                    className="jobItemLink"
+                    href={job.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {job.link}
+                </a>
+            ) : null}
+            <p className="jobItemMeta">
+                {formatJobDates(job)}
+                {' · '}
+                <JobStateSelect
+                    companyName={job.companyName}
+                    state={job.state}
+                    onSelect={(nextState) => onSetState(job.id, nextState)}
+                />
+            </p>
+        </div>
+        <button
+            type="button"
+            className="jobEdit"
+            aria-label={`Edit ${job.companyName}`}
+            onClick={() => onEdit(job.id)}
+        >
+            <EditIcon />
+        </button>
+        <button
+            type="button"
+            className="jobDelete"
+            aria-label={`Delete ${job.companyName}`}
+            onClick={() => onDelete(job.id)}
+        >
+            <TrashIcon />
+        </button>
+    </li>
+);
+
 export const JobList = ({ filter }: JobListProps) => {
     const { state, dispatch } = useStore();
     const jobs = filterJobs(state.jobs, filter);
@@ -95,60 +152,45 @@ export const JobList = ({ filter }: JobListProps) => {
 
     return (
         <>
-            <ul className="jobList">
-                {jobs.map((job: JobItem) => (
-                    <li key={job.id} className={`jobItem ${job.state}`}>
-                        <div className="jobItemContent">
-                            <p className="jobItemCompany">{job.companyName}</p>
-                            <p className="jobItemPosition">{job.position}</p>
-                            {job.description ? (
-                                <p className="jobItemDescription">{job.description}</p>
-                            ) : null}
-                            {job.link ? (
-                                <a
-                                    className="jobItemLink"
-                                    href={job.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {job.link}
-                                </a>
-                            ) : null}
-                            <p className="jobItemMeta">
-                                {formatJobDates(job)}
-                                {' · '}
-                                <JobStateSelect
-                                    companyName={job.companyName}
-                                    state={job.state}
-                                    onSelect={(nextState) => dispatch({
-                                        type: 'SET_STATE',
-                                        payload: {
-                                            id: job.id,
-                                            state: nextState,
-                                        },
-                                    })}
-                                />
-                            </p>
-                        </div>
-                        <button
-                            type="button"
-                            className="jobEdit"
-                            aria-label={`Edit ${job.companyName}`}
-                            onClick={() => setEditingJobId(job.id)}
+            <div className="jobBoard">
+                {JOB_COLUMNS.map((columnState) => {
+                    if (filter.length > 0 && !filter.includes(columnState)) {
+                        return null;
+                    }
+
+                    const columnJobs = jobs.filter((job) => job.state === columnState);
+                    const titleId = `job-column-${columnState}`;
+
+                    return (
+                        <section
+                            key={columnState}
+                            className={`jobColumn ${columnState}`}
+                            aria-labelledby={titleId}
                         >
-                            <EditIcon />
-                        </button>
-                        <button
-                            type="button"
-                            className="jobDelete"
-                            aria-label={`Delete ${job.companyName}`}
-                            onClick={() => setPendingDeleteId(job.id)}
-                        >
-                            <TrashIcon />
-                        </button>
-                    </li>
-                ))}
-            </ul>
+                            <h3 id={titleId} className="jobColumnTitle">
+                                {JobItemState[columnState]}
+                            </h3>
+                            <ul className="jobList">
+                                {columnJobs.map((job) => (
+                                    <JobListItem
+                                        key={job.id}
+                                        job={job}
+                                        onEdit={setEditingJobId}
+                                        onDelete={setPendingDeleteId}
+                                        onSetState={(id, nextState) => dispatch({
+                                            type: 'SET_STATE',
+                                            payload: {
+                                                id,
+                                                state: nextState,
+                                            },
+                                        })}
+                                    />
+                                ))}
+                            </ul>
+                        </section>
+                    );
+                })}
+            </div>
             {pendingDeleteId !== null && (
                 <DeleteConfirmDialog
                     onConfirm={confirmDelete}

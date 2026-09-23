@@ -1,3 +1,36 @@
+.jobBoard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.jobColumn {
+    min-width: 0;
+}
+
+.jobColumnTitle {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.jobColumn.new .jobColumnTitle {
+    color: lightblue;
+}
+
+.jobColumn.applied .jobColumnTitle {
+    color: yellow;
+}
+
+.jobColumn.accepted .jobColumnTitle {
+    color: green;
+}
+
+.jobColumn.rejected .jobColumnTitle {
+    color: #c0392b;
+}
+
 .jobList {
     list-style: none;
     margin: 0;
@@ -9,18 +42,12 @@
     align-items: flex-start;
     gap: 0.5rem;
     padding: 0.75rem 0;
+    color: #000;
+}
 
-    &.new {
-        color: lightblue;
-    }
-    &.applied {
-        color: yellow;
-    }
-    &.accepted {
-        color: green;
-    }
-    &.rejected {
-        color: #c0392b;
+@media (prefers-color-scheme: dark) {
+    .jobItem {
+        color: #9ca3af;
     }
 }
 
@@ -36,6 +63,26 @@
 .jobItemCompany {
     margin: 0;
     font-weight: 600;
+}
+
+.jobItem.new .jobItemCompany,
+.jobItem.new .jobItemPosition {
+    color: lightblue;
+}
+
+.jobItem.applied .jobItemCompany,
+.jobItem.applied .jobItemPosition {
+    color: yellow;
+}
+
+.jobItem.accepted .jobItemCompany,
+.jobItem.accepted .jobItemPosition {
+    color: green;
+}
+
+.jobItem.rejected .jobItemCompany,
+.jobItem.rejected .jobItemPosition {
+    color: #c0392b;
 }
 
 .jobItemPosition {
